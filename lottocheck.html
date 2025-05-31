@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ตรวจผลลอตเตอรี่</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+</head>
+
+<body class="bg-gray-100">
+    <div id="nav-placeholder"></div>
+    <div id="lotto-placeholder"></div>
+    <main>
+        <div class="max-w-4xl mx-auto mt-2">
+            <!-- สถิติสรุป -->
+            <div id="summaryCard" class="bg-white rounded-lg shadow p-4 mb-6 hidden">
+                <h2 class="text-xl font-semibold mb-2">สรุปผลการตรวจ</h2>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-3 rounded">
+                        <p class="text-gray-600">บิลซื้อทั้งหมด</p>
+                        <p id="totalTickets" class="text-2xl font-bold">0</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded">
+                        <p class="text-gray-600">บิลถูก</p>
+                        <p id="winningTickets" class="text-2xl font-bold">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-3 rounded">
+                        <p class="text-gray-600">รวมรางวัล</p>
+                        <p id="totalReward" class="text-2xl font-bold">0 บาท</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางแสดงผลลัพธ์ -->
+            <div id="resultsSection" class="hidden">
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <h2 class="text-xl font-semibold">บิลถูก</h2>
+                        <div class="text-sm text-gray-500" id="lastUpdated"></div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        ชื่อ
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        หมายเลข
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        ประเภท
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        รางวัล
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        จำนวนเงิน
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="winnersTable" class="bg-white divide-y divide-gray-200">
+                                <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ตั๋วที่ไม่ถูกรางวัล (แสดงบางส่วน) -->
+                <div class="bg-white rounded-lg shadow mt-6 p-4">
+                    <h2 class="text-xl font-semibold mb-2">บิลไม่ถูกรางวัล</h2>
+                    <ul id="losersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
+    </main>
+    <script type="module" src="./assets/js/main.js"></script>
+    <script type="module" src="./assets/js/scripts/lotteryChecker.js"></script>
+</body>
+
+</html>

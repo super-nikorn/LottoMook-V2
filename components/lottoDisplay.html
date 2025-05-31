@@ -1,0 +1,29 @@
+<!-- lottoDisplay.html -->
+<section class="max-w-6xl mx-auto p-3 bg-white shadow" id="lotto-placeholder">
+  <h2 class="text-lg font-bold text-gray-800">ผลหวยรัฐบาลไทย</h2>
+  <p class="flex text-sm text-gray-600 mb-3">
+    งวดวันที่  <span id="lotto-round" class="font-medium">--</span>
+    <select class="text-xs ml-auto" id="round-select">
+      <option value="">กำลังโหลดข้อมูล...</option>
+    </select>
+  </p>
+
+  <div class="grid grid-cols-4 gap-2 text-center">
+    <div class="p-1 border rounded">
+      <p class="text-red-600 font-bold" id="firstPrize">--</p>
+      <p class="text-xs text-gray-500">รางวัลที่ 1</p>
+    </div>
+    <div class="p-1 border rounded">
+      <p class="font-semibold" id="threeFront">--</p>
+      <p class="text-xs text-gray-500">เลขหน้า 3 ตัว</p>
+    </div>
+    <div class="p-1 border rounded">
+      <p class="font-semibold" id="threeBack">--</p>
+      <p class="text-xs text-gray-500">เลขท้าย 3 ตัว</p>
+    </div>
+    <div class="p-1 border rounded">
+      <p class="font-semibold" id="twoDigit">--</p>
+      <p class="text-xs text-gray-500">เลขท้าย 2 ตัว</p>
+    </div>
+  </div>
+</section>
