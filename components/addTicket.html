@@ -1,18 +1,26 @@
-<dialog id="dialogAddTicket" class="rounded-md shadow-md p-4 w-80">
-  <form id="dialogAddticketForm" method="dialog" class="space-y-3">
+<dialog id="dialogAddTicket" class="rounded-md shadow-md p-4 w-96 max-w-full">
+  <form id="dialogAddTicketForm" method="dialog" class="space-y-4">
     <h2 class="text-lg font-semibold">เพิ่มโพยหวย</h2>
-    <div class="mb-4">
 
-      <p class="text-xs">วันที่ : <span id="currentDate"></span></p>
+    <div class="mb-2">
+      <label for="buyerName" class="block mb-1">ผู้ซื้อ</label>
+      <input type="text" id="buyerName" class="w-full p-2 border rounded" required>
+      <p class="text-xs mt-1">วันที่: <span id="currentDate"></span></p>
+    </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button type="button" onclick="document.getElementById('dialogAddTicket').close()"
-          class="bg-gray-300 px-3 py-1 rounded">
-          ยกเลิก
-        </button>
-        <button type="submit" id="saveTicketBtn" class="bg-indigo-600 text-white px-3 py-1 rounded">
-          บันทึก
-        </button>
-      </div>
+    <!-- หมวดต่างๆ -->
+    <div id="fieldsContainer">
+      <!-- แต่ละหมวดจะถูกเติมโดย JS -->
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button type="button" onclick="document.getElementById('dialogAddTicket').close()" 
+        class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+        ยกเลิก
+      </button>
+      <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+        บันทึก
+      </button>
+    </div>
   </form>
 </dialog>
