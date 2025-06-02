@@ -1,306 +1,185 @@
 <!DOCTYPE html>
 <html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>รายงานลอตเตอรี่</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
 
-    <!-- SheetJS สำหรับ Export Excel -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รายงานลอตเตอรี่</title>
+  <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+  <style>
+    :root {
+      --primary-color: #dc2626;
+      --secondary-color: #2563eb;
+      --accent-color: #10b981;
+      --dark-color: #1e293b;
+    }
+    
+    .gradient-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #ea580c 100%);
+    }
+    
+    .report-card {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .report-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: #b91c1c;
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .table-row:hover {
+      background-color: #f8fafc;
+    }
+    
+    .modal-content {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .draw-select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+    }
+  </style>
+</head>
 
-    <style>
-      /* CSS เพิ่มเติมของคุณ */
-      .ticket-row:hover {
-        background-color: #f8fafc;
-      }
+<body class="bg-gray-50 min-h-screen">
+  <div id="nav-placeholder"></div>
+  <div id="lotto-placeholder"></div>
 
-      .sortable-header:hover {
-        background-color: #f1f5f9;
-      }
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="gradient-header text-white rounded-xl p-6 mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold flex items-center">
+          <i class="fas fa-file-alt mr-3"></i>รายงานโพยลอตเตอรี่
+        </h1>
+        <p class="opacity-90 mt-1">ระบบจัดการและสรุปผลการขายหวยแต่ละงวด</p>
+      </div>
+      <!-- <button id="export-btn" class="bg-white text-red-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+        <i class="fas fa-file-export mr-2"></i>Export Excel
+      </button> -->
+    </div>
 
-      .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    </style>
-  </head>
-
-  <body class="bg-gray-100">
-    <div id="nav-placeholder"></div>
-    <div id="lotto-placeholder"></div>
-
-    <div class="max-w-6xl mx-auto">
-      <!-- ส่วนหัวรายงาน -->
-      <header
-        class="bg-white p-4 mb-4 flex flex-wrap justify-between items-center"
-      >
-        <h1 class="text-xl font-bold text-indigo-700">ระบบจัดการลอตเตอรี่</h1>
-
-        <div class="flex items-center space-x-4 sm:mt-0">
-          <!-- ช่องค้นหา -->
-          <div class="relative">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="ค้นหาชื่อหรือเลข..."
-              class="pl-8 pr-4 py-2 border rounded-lg text-sm w-full sm:w-64"
-            />
-            <svg
-              class="absolute left-2 top-2.5 h-4 w-4 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-
-          <!-- ปุ่มส่งออก -->
-          <button
-            id="exportBtn"
-            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm flex items-center"
-          >
-            <svg
-              class="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
-            Excel
-          </button>
+    <!-- Filter Section -->
+    <div class="bg-white rounded-xl report-card p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label for="draw-date" class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-calendar-alt mr-2"></i>เลือกงวด
+          </label>
+          <select id="draw-date" class="draw-select w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            <!-- Options will be populated by JavaScript -->
+          </select>
         </div>
-      </header>
-
-      <!-- ฟิลเตอร์และสรุปข้อมูล -->
-      <section class="bg-white p-4 rounded-lg shadow mb-4">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center space-x-4">
-            <!-- ฟิลเตอร์วันที่ -->
-            <div>
-              <label
-                for="filterDate"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >วันที่</label
-              >
-              <input
-                type="text"
-                id="filterDate"
-                class="border rounded-lg px-3 py-2 text-sm"
-                placeholder="เลือกวันที่"
-                class="border rounded-lg px-3 py-2 text-sm"
-                onfocus="(this.type='date')"
-                onblur="if(this.value===''){this.type='text'}"
-              />
-            </div>
-
-            <!-- ฟิลเตอร์ประเภท -->
-            <div>
-              <label
-                for="filterType"
-                class="block text-sm font-medium text-gray-700 mb-1"
-                >ประเภท</label
-              >
-              <select
-                id="filterType"
-                class="border rounded-lg px-3 py-2 text-sm"
-              >
-                <option value="">ทั้งหมด</option>
-                <option value="บน">บน</option>
-                <option value="ล่าง">ล่าง</option>
-                <option value="บน-ล่าง">บน-ล่าง</option>
-                <option value="3 ตัวหน้า">3 ตัวหน้า</option>
-                <option value="3 ตัวท้าย">3 ตัวท้าย</option>
-                <option value="3 ตัวตรง">3 ตัวตรง</option>
-                <option value="3 ตัวโต๊ด">3 ตัวโต๊ด</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- สรุปข้อมูล -->
-          <div id="summaryBox" class="bg-blue-50 px-4 py-2 rounded-lg text-sm">
-            <div class="flex space-x-6">
-              <div>
-                <span class="font-medium">จำนวน:</span>
-                <span id="totalCount">0</span> รายการ
-              </div>
-              <div>
-                <span class="font-medium">รวมเงิน:</span>
-                <span id="totalAmount">0</span> บาท
-              </div>
-            </div>
-          </div>
+        
+        <div class="md:col-span-2">
+          <!-- <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-filter mr-2"></i>ตัวกรองเพิ่มเติม
+          </label> -->
+          <!-- <div class="flex space-x-4"> -->
+            <!-- <input type="text" id="search-name" placeholder="ค้นหาชื่อผู้ซื้อ" class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"> -->
+            <!-- <button id="search-btn" class="btn-primary text-white px-6 rounded-lg font-medium">
+              <i class="fas fa-search mr-2"></i>ค้นหา
+            </button> -->
+          <!-- </div> -->
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- ตารางข้อมูล -->
-      <section class="bg-white p-4 rounded-lg shadow mb-4 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+    <!-- Summary Section -->
+    <div id="summary" class="bg-white rounded-xl report-card p-6 mb-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Summary cards will be populated by JavaScript -->
+    </div>
+
+    <!-- Report Table -->
+    <div class="bg-white rounded-xl report-card overflow-hidden mb-6">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-100">
             <tr>
-              <th
-                data-sort="name"
-                class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header"
-              >
-                <div class="flex items-center cursor-pointer">
-                  ชื่อ
-                  <svg
-                    class="ml-1 w-3 h-3 text-gray-400 sort-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                    />
-                  </svg>
-                </div>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <i class="fas fa-user mr-1"></i> ชื่อผู้ซื้อ
               </th>
-              <th
-                data-sort="number"
-                class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header"
-              >
-                <div class="flex items-center cursor-pointer">
-                  เลข
-                  <svg
-                    class="ml-1 w-3 h-3 text-gray-400 sort-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                    />
-                  </svg>
-                </div>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <i class="fas fa-coins mr-1"></i> ยอดรวม
               </th>
-              <th
-                data-sort="type"
-                class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header"
-              >
-                <div class="flex items-center cursor-pointer">
-                  ประเภท
-                  <svg
-                    class="ml-1 w-3 h-3 text-gray-400 sort-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                    />
-                  </svg>
-                </div>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <i class="fas fa-clock mr-1"></i> เวลาที่บันทึก
               </th>
-              <th
-                data-sort="amount"
-                class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header"
-              >
-                <div class="flex items-center justify-end cursor-pointer">
-                  ยอดเงิน
-                  <svg
-                    class="ml-1 w-3 h-3 text-gray-400 sort-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                    />
-                  </svg>
-                </div>
-              </th>
-              <th
-                data-sort="date"
-                class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header"
-              >
-                <div class="flex items-center cursor-pointer">
-                  วันที่
-                  <svg
-                    class="ml-1 w-3 h-3 text-gray-400 sort-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                    />
-                  </svg>
-                </div>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <i class="fas fa-ellipsis-h mr-1"></i> การดำเนินการ
               </th>
             </tr>
           </thead>
-          <tbody id="dataTableBody" class="bg-white divide-y divide-gray-200">
-            <!-- ข้อมูลจะถูกเพิ่มโดย JavaScript -->
-            <tr>
-              <td colspan="5" class="px-4 py-4 text-center text-gray-500">
-                กำลังโหลดข้อมูล...
-              </td>
-            </tr>
+          <tbody id="report-body" class="bg-white divide-y divide-gray-200">
+            <!-- Table rows will be populated by JavaScript -->
           </tbody>
         </table>
-      </section>
-
-      <!-- Pagination -->
-      <section
-        class="bg-white p-4 rounded-lg shadow flex justify-between items-center"
-      >
-        <div class="text-sm text-gray-600">
-          แสดง <span id="startItem">0</span> ถึง <span id="endItem">0</span> จาก
-          <span id="totalItems">0</span>
-          รายการ
-        </div>
-        <div class="flex space-x-2">
-          <button
-            id="prevPageBtn"
-            class="pagination-btn px-3 py-1 border rounded-md text-sm pagination-btn:disabled"
-          >
-            ก่อนหน้า
-          </button>
-          <div id="pageNumbers" class="flex space-x-1">
-            <!-- หมายเลขหน้าจะถูกเพิ่มโดย JavaScript -->
-          </div>
-          <button
-            id="nextPageBtn"
-            class="pagination-btn px-3 py-1 border rounded-md text-sm"
-          >
-            ถัดไป
-          </button>
-        </div>
-      </section>
+      </div>
     </div>
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module" src="./assets/js/scripts/report.js"></script>
-  </body>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center bg-white rounded-xl report-card px-6 py-4">
+      <div class="text-sm text-gray-500">
+        แสดง <span id="start-item">1</span> ถึง <span id="end-item">10</span> จาก <span id="total-items">0</span> รายการ
+      </div>
+      <div class="flex space-x-2">
+        <button id="prev-page" class="px-4 py-2 border rounded-lg text-gray-700 disabled:opacity-50">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="next-page" class="px-4 py-2 border rounded-lg text-gray-700 disabled:opacity-50">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between p-4 border-b">
+        <h2 class="text-xl font-bold text-gray-800">
+          <i class="fas fa-file-invoice mr-2"></i>รายละเอียดโพย
+        </h2>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-xl">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content p-6 overflow-y-auto">
+        <pre id="modal-content" class="text-sm whitespace-pre-wrap font-mono"></pre>
+      </div>
+      <!-- <div class="p-4 border-t flex justify-end">
+        <button id="print-modal" class="btn-secondary text-white px-6 py-2 rounded-lg font-medium">
+          <i class="fas fa-print mr-2"></i>พิมพ์
+        </button>
+      </div> -->
+    </div>
+  </div>
+
+  <script type="module" src="./assets/js/main.js"></script>
+  <script type="module" src="./assets/js/scripts/report.js"></script>
+</body>
 </html>
