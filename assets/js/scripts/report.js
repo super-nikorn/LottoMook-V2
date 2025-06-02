@@ -211,18 +211,18 @@ window.showDetail = function (entry) {
   // content += `วันที่บันทึก: ${entry.timestamp.toDate().toLocaleString("th-TH")}\n\n`;
 
   content += "รายการหวย:\n";
-  content += "----------------------------------------\n";
+  content += "-----------------------------------\n";
 
   Object.entries(entry["ประเภท"] || {}).forEach(([type, items]) => {
     content += `\n${type}:\n`;
     items.forEach((item) => {
       content += `- เลข ${item.เลข
         .toString()
-        .padStart(3, "0")} (${item.เงิน.toLocaleString("th-TH")} บาท)\n`;
+        .padStart(3)} (${item.เงิน.toLocaleString("th-TH")} บาท)\n`;
     });
   });
 
-  content += "\n----------------------------------------\n";
+  content += "\n-----------------------------------\n";
   content += `ยอดรวม: ${entry["ยอดรวม"].toLocaleString("th-TH")} บาท`;
 
   document.getElementById("modal-content").textContent = content;
