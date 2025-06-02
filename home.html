@@ -53,11 +53,10 @@
       <div class="bg-white max-w-6xl mx-auto shadow-md p-2 mt-4">
         <div class="flex font-light text-gray-700 pl-2">
           <p>ตัวเลขที่มีคนซื้อเยอะที่สุด</p>
-          <button onclick="showDataCurrent()" id="btnShowData"
-            class="text-white bg-green-500 rounded-md text-sm ml-auto">
+          <button id="btnShowData" class="text-white bg-green-500 rounded-md text-sm ml-auto">
             แสดงข้อมูลปัจจุบัน
           </button>
-          <button onclick="clearDataForm()" id="btnClearData" class="text-white bg-red-500 rounded-md text-sm ml-2">
+          <button id="btnClearData" class="text-white bg-red-500 rounded-md text-sm ml-2">
             Clear
           </button>
         </div>
@@ -73,6 +72,119 @@
       </footer>
     </main>
     <script type="module" src="./assets/js/main.js"></script>
+    <script type="module">
+      // สคริปต์นี้ดึงข้อมูลจาก Firestore เพื่อแสดงผลยอดรวม บิลทั้งหมด และเลขยอดนิยม 5 อันดับ
+
+      import { db } from './assets/js/api/firebaseConfig.js';
+      import {
+        collection,
+        query,
+        where,
+        getDocs,
+        Timestamp,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      function getCurrentDateRange() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const day = now.getDate();
+
+        let fromDate, toDate;
+
+        if (day >= 5 && day <= 18) {
+          fromDate = new Date(year, month, 5);
+          toDate = new Date(year, month, 18, 23, 59, 59);
+        } else {
+          // หากวันที่ 25-31 หรือ 1-2 ให้ใช้ช่วง 25 ของเดือนก่อน ถึง 2 ของเดือนถัดไป
+          const fromMonth = day < 5 ? month - 1 : month;
+          const toMonth = day < 5 ? month : month + 1;
+          fromDate = new Date(year, fromMonth, 25);
+          toDate = new Date(year, toMonth, 2, 23, 59, 59);
+        }
+
+        return {
+          fromTimestamp: Timestamp.fromDate(fromDate),
+          toTimestamp: Timestamp.fromDate(toDate),
+          formatted: `${fromDate.toLocaleDateString()} - ${toDate.toLocaleDateString()}`
+        };
+      }
+
+      async function showDataCurrent() {
+        const { fromTimestamp, toTimestamp, formatted } = getCurrentDateRange();
+        document.getElementById("showFormDateToDate").innerText = formatted;
+
+        const q = query(
+          collection(db, "lottoTickets"),
+          where("timestamp", ">=", fromTimestamp),
+          where("timestamp", "<=", toTimestamp)
+        );
+
+        const snapshot = await getDocs(q);
+        let totalPrize = 0;
+        let totalTickets = 0;
+
+        const counter = {
+          "สามตัวตรง": {},
+          "สามตัวโต๊ด": {},
+          "บน": {},
+          "ล่าง": {}
+        };
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          totalTickets++;
+          totalPrize += data["ยอดรวม"] || 0;
+
+          const types = data["ประเภท"] || {};
+          for (const [type, items] of Object.entries(types)) {
+            for (const item of items) {
+              const key = item.เลข.toString().padStart(3);
+              if (!counter[type][key]) {
+                counter[type][key] = 0;
+              }
+              counter[type][key] += item.เงิน;
+            }
+          }
+        });
+
+        document.getElementById("totalTicketsPrize").innerText = totalPrize.toLocaleString();
+        document.getElementById("totalTicketsAmount").innerText = totalTickets;
+
+        const resultDiv = document.getElementById("resultContainer");
+        resultDiv.innerHTML = "";
+
+        for (const type of ["สามตัวตรง", "สามตัวโต๊ด", "บน", "ล่าง"]) {
+          const sorted = Object.entries(counter[type] || {})
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+
+          const html = `
+        <div class="mb-4">
+          <h4 class="text-md font-semibold text-gray-600">${type}</h4>
+          <ul class="text-sm text-gray-700">
+            ${sorted.map(([number, total]) => `<li>${number} = ${total.toLocaleString()} บาท</li>`).join("")}
+          </ul>
+        </div>
+      `;
+          resultDiv.innerHTML += html;
+        }
+      }
+
+      function clearDataForm() {
+        document.getElementById("totalTicketsPrize").innerText = "0";
+        document.getElementById("totalTicketsAmount").innerText = "0";
+        document.getElementById("resultContainer").innerHTML = "";
+        document.getElementById("showFormDateToDate").innerText = "";
+      }
+
+      // Add event listeners after DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('btnShowData').addEventListener('click', showDataCurrent);
+        document.getElementById('btnClearData').addEventListener('click', clearDataForm);
+      });
+    </script>
   </body>
 
 </html>
