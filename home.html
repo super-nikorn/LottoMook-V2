@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>เจ้ามือหวย - หน้าแรก</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
@@ -24,25 +22,18 @@
         <img src="assets/image/banner.jpg" alt="banner" class="w-full" />
       </figure>
 
-      <article
-        class="stats-card bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mt-4"
-      >
+      <article class="stats-card bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mt-4">
         <header class="grid grid-cols-2 border-b border-gray-100 p-4">
           <h2 class="text-gray-600 text-sm font-medium">สรุปยอดของงวดปัจจุบัน</h2>
-          <button onclick="document.location='addLotto.html'" class="text-white bg-green-500 rounded-md text-sm ml-auto">เพิ่มโพยหวย</button>
-          <!-- <button onclick="document.location='addLotto.html'"
-            class="text-white bg-green-500 rounded-md text-sm ml-auto" id="openFormAddTicket">
-            เพิ่มโพยหวย +
-          </button> -->
+          <button onclick="document.location='addLotto.html'"
+            class="text-white bg-green-500 rounded-md text-sm ml-auto">เพิ่มโพยหวย</button>
         </header>
 
         <div class="content p-5 flex items-center justify-between">
           <section class="main-stat">
             <h3 class="text-gray-500 text-sm">ยอดรวมงวดปัจจุบัน</h3>
             <div class="flex items-baseline mt-1">
-              <span class="text-3xl font-bold text-indigo-600" id="totalTicketsPrize"
-                >0</span
-              >
+              <span class="text-3xl font-bold text-indigo-600" id="totalTicketsPrize">0</span>
               <span class="text-gray-500 ml-2">฿</span>
             </div>
           </section>
@@ -62,23 +53,16 @@
       <div class="bg-white max-w-6xl mx-auto shadow-md p-2 mt-4">
         <div class="flex font-light text-gray-700 pl-2">
           <p>ตัวเลขที่มีคนซื้อเยอะที่สุด</p>
-          <button
-            onclick="showDataCurrent()"
-            id="btnShowData"
-            class="text-white bg-green-500 rounded-md text-sm ml-auto"
-          >
+          <button onclick="showDataCurrent()" id="btnShowData"
+            class="text-white bg-green-500 rounded-md text-sm ml-auto">
             แสดงข้อมูลปัจจุบัน
           </button>
-          <button
-            onclick="clearDataForm()"
-            id="btnClearData"
-            class="text-white bg-red-500 rounded-md text-sm ml-2"
-          >
+          <button onclick="clearDataForm()" id="btnClearData" class="text-white bg-red-500 rounded-md text-sm ml-2">
             Clear
           </button>
         </div>
         <p class="text-xs text-gray-400 pl-2">
-          แสดงจ้อมูลตั้งแต่วันที่ : <br>
+          แสดงข้อมูลตั้งแต่วันที่ : <br>
           <span id="showFormDateToDate"></span></br>
         </p>
         <div id="resultContainer" class="max-w-6xl mx-auto px-4 mt-4"></div>
@@ -88,7 +72,7 @@
         <p class="text-xs text-gray-400">แสดง 5 อันดับแรกของแต่ละประเภท</p>
       </footer>
     </main>
-    <script type="module" src="./assets/js/scripts/addTicket.js"></script>
     <script type="module" src="./assets/js/main.js"></script>
   </body>
+
 </html>

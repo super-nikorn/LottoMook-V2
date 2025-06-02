@@ -28,7 +28,9 @@
     <div class="max-w-3xl mx-auto">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-red-600 mb-2 mt-6">ระบบจัดเรียงโพยหวย</h1>
+        <h1 class="text-3xl font-bold text-red-600 mb-2 mt-6">
+          ระบบจัดเรียงโพยหวย
+        </h1>
         <p class="text-gray-600">กรอกข้อมูลโพยหวยเพื่อจัดเรียงและคำนวณยอดรวม</p>
       </div>
 
@@ -55,7 +57,7 @@
           <textarea
             id="lottoInput"
             rows="10"
-            placeholder="ตัวอย่าง:&#10;139&#10;439&#10;50*50"
+            placeholder="ตัวอย่าง : การกรอกโพยหวย&#10;139 = 3 ตัวตรง-โต๊ด&#10;439 = 3 ตัวตรง-โต๊ด&#10;85 = 2 ตัว บน-ล่าง&#10;49 = 2 ตัว บน-ล่าง&#10;50*50 = ระบบจะกลับเลขอัตโนมัติ"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
           ></textarea>
         </div>
@@ -133,6 +135,14 @@
       let tempTickets = [];
 
       function preprocessInput(inputText) {
+        document.getElementById("lottoInput").addEventListener("input", () => {
+          document.getElementById("choiceBox").style.display = "none";
+          document.getElementById("radioContainer").innerHTML = "";
+          document.getElementById("choicePrompt").textContent = "";
+          tempParsed = null;
+          tempParsedType = null;
+        });
+
         inputText = inputText
           .replace(/\r/g, "")
           .split("\n")
