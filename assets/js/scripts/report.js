@@ -107,6 +107,13 @@ async function loadAllRoundsToSelect() {
   }
 }
 
+function formatLottoNumber(number) {
+  const num = number.toString();
+  if (num.length === 1) return num.padStart(2, '0'); // 0 → 00
+  if (num.length === 2) return num;                 // 85 → 85
+  return num.padStart(3, '0');                      // 1 → 001, 25 → 025, 123 → 123
+}
+
 // เพิ่มฟังก์ชันแสดงรายละเอียดบิล
 function showBillDetail(entry) {
   let content = `ชื่อผู้ซื้อ: ${entry["ชื่อผู้ซื้อ"] || "-"}\n`;
@@ -120,7 +127,7 @@ function showBillDetail(entry) {
     if (items && items.length > 0) {
       content += `\n${type}:\n`;
       items.forEach((item) => {
-        content += `- เลข ${item.เลข.toString().padStart(3, '0')} (${item.เงิน.toLocaleString("th-TH")} บาท)\n`;
+        content += `- เลข ${formatLottoNumber(item.เลข)} (${item.เงิน.toLocaleString("th-TH")} บาท)\n`;
       });
     }
   });
