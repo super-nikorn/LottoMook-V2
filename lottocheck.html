@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ตรวจผลลอตเตอรี่</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
-</head>
 
-<body class="bg-gray-100">
-    <div id="nav-placeholder"></div>
-    <div id="lotto-placeholder"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ตรวจผลลอตเตอรี่</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="./assets/css/style.css" />
+        <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+    </head>
 
-    </main>
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module" src="./assets/js/scripts/lottoChecks.js"></script>
-</body>
+    <body class="bg-gray-100">
+        <div id="nav-placeholder"></div>
+        <div id="lotto-placeholder"></div>
+        <label for="lottoSelect">เลือกงวด:</label>
+        <select id="lottoSelect">
+            <option disabled selected>กำลังโหลด...</option>
+        </select>
+
+        <div id="lottoInfo" style="margin-top: 1em;">
+            <p><strong>รางวัลที่ 1:</strong> <span id="firstPrize">-</span></p>
+            <p><strong>2 ตัวท้าย:</strong> <span id="twoDigit">-</span></p>
+        </div>
+        </main>
+        <script type="module" src="./assets/js/main.js"></script>
+        <script type="module" src="./assets/js/scripts/lottoChecks.js"></script>
+    </body>
 
 </html>
