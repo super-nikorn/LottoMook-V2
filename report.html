@@ -1,185 +1,170 @@
 <!DOCTYPE html>
 <html lang="th">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>รายงานลอตเตอรี่</title>
-  <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
-  <style>
-    :root {
-      --primary-color: #dc2626;
-      --secondary-color: #2563eb;
-      --accent-color: #10b981;
-      --dark-color: #1e293b;
-    }
-    
-    .gradient-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, #ea580c 100%);
-    }
-    
-    .report-card {
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    .report-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-    
-    .btn-primary {
-      background-color: var(--primary-color);
-    }
-    
-    .btn-primary:hover {
-      background-color: #b91c1c;
-    }
-    
-    .btn-secondary {
-      background-color: var(--secondary-color);
-    }
-    
-    .btn-secondary:hover {
-      background-color: #1d4ed8;
-    }
-    
-    .table-row:hover {
-      background-color: #f8fafc;
-    }
-    
-    .modal-content {
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-    
-    .draw-select {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-      background-position: right 0.5rem center;
-      background-repeat: no-repeat;
-      background-size: 1.5em 1.5em;
-    }
-  </style>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบรายงานหวย - เจ้ามือหวยออนไลน์</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+    <style>
+      :root {
+        --primary-color: #4f46e5;
+        --secondary-color: #10b981;
+        --accent-color: #f59e0b;
+        --dark-color: #1e293b;
+        --light-color: #f8fafc;
+      }
 
-<body class="bg-gray-50 min-h-screen">
-  <div id="nav-placeholder"></div>
-  <div id="lotto-placeholder"></div>
+      .gradient-bg {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+      }
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header Section -->
-    <div class="gradient-header text-white rounded-xl p-6 mb-8 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-bold flex items-center">
-          <i class="fas fa-file-alt mr-3"></i>รายงานโพยลอตเตอรี่
-        </h1>
-        <p class="opacity-90 mt-1">ระบบจัดการและสรุปผลการขายหวยแต่ละงวด</p>
-      </div>
-      <!-- <button id="export-btn" class="bg-white text-red-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-        <i class="fas fa-file-export mr-2"></i>Export Excel
-      </button> -->
-    </div>
+      .report-card {
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
 
-    <!-- Filter Section -->
-    <div class="bg-white rounded-xl report-card p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      .report-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      .table-row:hover {
+        background-color: #f8fafc;
+      }
+
+      .download-btn {
+        transition: all 0.3s ease;
+      }
+
+      .download-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .select-round {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+      }
+
+      #detailModal {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .modal-content-container {
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      /* ทำให้แถวตารางเป็น cursor pointer เมื่อโฮเวอร์ */
+      .table-row {
+        transition: background-color 0.2s ease;
+      }
+
+      .table-row:hover {
+        background-color: #f8fafc;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 min-h-screen">
+    <div id="nav-placeholder"></div>
+    <div id="lotto-placeholder"></div>
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header Section -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
-          <label for="draw-date" class="block text-sm font-medium text-gray-700 mb-2">
-            <i class="fas fa-calendar-alt mr-2"></i>เลือกงวด
-          </label>
-          <select id="draw-date" class="draw-select w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
-            <!-- Options will be populated by JavaScript -->
-          </select>
+          <h1 class="text-2xl font-bold text-gray-800">
+            <i class="fas fa-chart-pie text-indigo-600 mr-2"></i> ระบบรายงานหวย
+          </h1>
+          <p class="text-gray-600 mt-1">ดูรายงานสรุปยอดขายหวยแต่ละงวด</p>
         </div>
-        
-        <div class="md:col-span-2">
-          <!-- <label class="block text-sm font-medium text-gray-700 mb-2">
-            <i class="fas fa-filter mr-2"></i>ตัวกรองเพิ่มเติม
-          </label> -->
-          <!-- <div class="flex space-x-4"> -->
-            <!-- <input type="text" id="search-name" placeholder="ค้นหาชื่อผู้ซื้อ" class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"> -->
-            <!-- <button id="search-btn" class="btn-primary text-white px-6 rounded-lg font-medium">
-              <i class="fas fa-search mr-2"></i>ค้นหา
-            </button> -->
-          <!-- </div> -->
+
+        <div class="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+          <div class="relative">
+            <select id="selectDateRenderData"
+              class="select-round appearance-none bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option disabled selected>เลือกงวดหวย</option>
+            </select>
+          </div>
+
+          <button id="exportExcelBtn"
+            class="download-btn bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+            <i class="fas fa-file-excel mr-2"></i> Export Excel
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Container -->
+      <div id="reportContainer" class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <!-- Summary Card -->
+        <div id="reportSummary" class="bg-indigo-50 border-b border-indigo-100 p-6 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="report-card bg-white rounded-lg p-4">
+              <h3 class="text-gray-500 text-sm font-medium">จำนวนรายการ</h3>
+              <p id="totalOrders" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
+            </div>
+            <div class="report-card bg-white rounded-lg p-4">
+              <h3 class="text-gray-500 text-sm font-medium">ยอดรวมทั้งหมด</h3>
+              <p id="totalAmount" class="text-2xl font-bold text-green-600 mt-1">0 บาท</p>
+            </div>
+            <div class="report-card bg-white rounded-lg p-4">
+              <h3 class="text-gray-500 text-sm font-medium">ช่วงเวลา</h3>
+              <p id="dateRange" class="text-lg font-medium text-gray-700 mt-1">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div id="reportResults" class="p-6 overflow-x-auto">
+          <div class="text-center py-12 text-gray-400">
+            <i class="fas fa-chart-bar text-4xl mb-3"></i>
+            <p class="text-lg">กรุณาเลือกงวดหวยเพื่อแสดงรายงาน</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="detailModal" class="fixed inset-0 z-50 hidden">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <!-- Modal content -->
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full max-h-screen overflow-y-auto">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                  <i class="fas fa-receipt mr-2 text-indigo-600"></i>รายละเอียดบิล
+                </h3>
+                <div class="mt-2">
+                  <pre id="modalContent"
+                    class="text-sm text-gray-700 whitespace-pre-wrap font-sans bg-gray-50 p-4 rounded"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button id="closeModal" type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              ปิด
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <script type="module" src="./assets/js/main.js"></script>
+    <script type="module" src="./assets/js/scripts/report.js"></script>
+  </body>
 
-    <!-- Summary Section -->
-    <div id="summary" class="bg-white rounded-xl report-card p-6 mb-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-      <!-- Summary cards will be populated by JavaScript -->
-    </div>
-
-    <!-- Report Table -->
-    <div class="bg-white rounded-xl report-card overflow-hidden mb-6">
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <i class="fas fa-user mr-1"></i> ชื่อผู้ซื้อ
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <i class="fas fa-coins mr-1"></i> ยอดรวม
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <i class="fas fa-clock mr-1"></i> เวลาที่บันทึก
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <i class="fas fa-ellipsis-h mr-1"></i> การดำเนินการ
-              </th>
-            </tr>
-          </thead>
-          <tbody id="report-body" class="bg-white divide-y divide-gray-200">
-            <!-- Table rows will be populated by JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-between items-center bg-white rounded-xl report-card px-6 py-4">
-      <div class="text-sm text-gray-500">
-        แสดง <span id="start-item">1</span> ถึง <span id="end-item">10</span> จาก <span id="total-items">0</span> รายการ
-      </div>
-      <div class="flex space-x-2">
-        <button id="prev-page" class="px-4 py-2 border rounded-lg text-gray-700 disabled:opacity-50">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button id="next-page" class="px-4 py-2 border rounded-lg text-gray-700 disabled:opacity-50">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between p-4 border-b">
-        <h2 class="text-xl font-bold text-gray-800">
-          <i class="fas fa-file-invoice mr-2"></i>รายละเอียดโพย
-        </h2>
-        <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-xl">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-content p-6 overflow-y-auto">
-        <pre id="modal-content" class="text-sm whitespace-pre-wrap font-mono"></pre>
-      </div>
-      <!-- <div class="p-4 border-t flex justify-end">
-        <button id="print-modal" class="btn-secondary text-white px-6 py-2 rounded-lg font-medium">
-          <i class="fas fa-print mr-2"></i>พิมพ์
-        </button>
-      </div> -->
-    </div>
-  </div>
-
-  <script type="module" src="./assets/js/main.js"></script>
-  <script type="module" src="./assets/js/scripts/report.js"></script>
-</body>
 </html>
