@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+      <link rel="stylesheet" href="./assets/css/style.css" />
     <style>
       :root {
         --primary-color: #4f46e5;
@@ -132,7 +133,7 @@
     </main>
 
     <div id="detailModal" class="fixed inset-0 z-50 hidden">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="flex items-center justify-center min-h-screen pt-2 px-2 pb-10 text-center sm:block sm:p-0">
         <!-- Background overlay -->
         <div class="fixed inset-0 transition-opacity" aria-hidden="true">
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -141,22 +142,22 @@
         <!-- Modal content -->
         <div
           class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full max-h-screen overflow-y-auto">
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="bg-white px-2 pt-5 pb-2 sm:p-6 sm:pb-2">
             <div class="sm:flex sm:items-start">
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+              <div class="mt-1 text-center sm:mt-0 sm:ml-2 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
                   <i class="fas fa-receipt mr-2 text-indigo-600"></i>รายละเอียดบิล
                 </h3>
-                <div class="mt-2">
+                <div class="mt-1">
                   <pre id="modalContent"
-                    class="text-sm text-gray-700 whitespace-pre-wrap font-sans bg-gray-50 p-4 rounded"></pre>
+                    class="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-2 rounded"></pre>
                 </div>
               </div>
             </div>
           </div>
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div class="bg-gray-50 px-2 py-3 sm:px-3 sm:flex sm:flex-row-reverse">
             <button id="closeModal" type="button"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              class="mt-1 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
               ปิด
             </button>
           </div>

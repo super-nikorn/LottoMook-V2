@@ -14,7 +14,7 @@ export async function saveToDatabase(payload) {
 
   try {
     await setDoc(doc(db, "lottoTickets", documentId), payload);
-    alert("✅ บันทึกโพยลง Firestore เรียบร้อยแล้ว");
+    alert("✅ บันทึกโพยเรียบร้อยแล้ว");
   } catch (error) {
     console.error("❌ บันทึกไม่สำเร็จ:", error);
     alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล");
