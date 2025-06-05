@@ -1,171 +1,164 @@
 <!DOCTYPE html>
 <html lang="th">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ระบบรายงานหวย - เจ้ามือหวยออนไลน์</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
-      <link rel="stylesheet" href="./assets/css/style.css" />
-    <style>
-      :root {
-        --primary-color: #4f46e5;
-        --secondary-color: #10b981;
-        --accent-color: #f59e0b;
-        --dark-color: #1e293b;
-        --light-color: #f8fafc;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบรายงานหวย - เจ้ามือหวยออนไลน์</title>
+  <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <style>
+    pre {
+      line-height: 1.2 !important;
+      font-size: 12px !important;
+      margin: 0;
+      white-space: pre;
+      text-align: left;
 
-      .gradient-bg {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
-      }
+    }
 
-      .report-card {
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      }
+    :root {
+      --primary-color: #4f46e5;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
 
-      .report-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+    }
 
-      .table-row:hover {
-        background-color: #f8fafc;
-      }
+    .report-card {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
 
-      .download-btn {
-        transition: all 0.3s ease;
-      }
+    .report-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
 
-      .download-btn:hover {
-        transform: translateY(-2px);
-      }
+    .table-row:hover {
+      background-color: #f8fafc;
+    }
 
-      .select-round {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-      }
+    .download-btn {
+      transition: all 0.3s ease;
+    }
 
-      #detailModal {
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-      }
+    .download-btn:hover {
+      transform: translateY(-2px);
+    }
 
-      .modal-content-container {
-        max-height: 70vh;
-        overflow-y: auto;
-      }
+    .select-round {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+    }
 
-      /* ทำให้แถวตารางเป็น cursor pointer เมื่อโฮเวอร์ */
-      .table-row {
-        transition: background-color 0.2s ease;
-      }
+    /* ทำให้แถวตารางเป็น cursor pointer เมื่อโฮเวอร์ */
+    .table-row {
+      transition: background-color 0.2s ease;
+    }
 
-      .table-row:hover {
-        background-color: #f8fafc;
-      }
-    </style>
-  </head>
+    .table-row:hover {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
 
-  <body class="bg-gray-50 min-h-screen">
-    <div id="nav-placeholder"></div>
-    <div id="lotto-placeholder"></div>
+<body class="bg-gray-50 min-h-screen">
+  <div id="nav-placeholder"></div>
+  <div id="lotto-placeholder"></div>
 
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header Section -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-800">
-            <i class="fas fa-chart-pie text-indigo-600 mr-2"></i> ระบบรายงานหวย
-          </h1>
-          <p class="text-gray-600 mt-1">ดูรายงานสรุปยอดขายหวยแต่ละงวด</p>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">
+          <i class="fas fa-chart-pie text-indigo-600 mr-2"></i> ระบบรายงานหวย
+        </h1>
+        <p class="text-gray-600 mt-1">ดูรายงานสรุปยอดขายหวยแต่ละงวด</p>
+      </div>
+
+      <div class="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+        <div class="relative">
+          <select id="selectDateRenderData"
+            class="select-round appearance-none bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <option disabled selected>เลือกงวดหวย</option>
+          </select>
         </div>
 
-        <div class="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
-          <div class="relative">
-            <select id="selectDateRenderData"
-              class="select-round appearance-none bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option disabled selected>เลือกงวดหวย</option>
-            </select>
-          </div>
+        <button id="exportExcelBtn"
+          class="download-btn bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+          <i class="fas fa-file-excel mr-2"></i> Export Excel
+        </button>
+      </div>
+    </div>
 
-          <button id="exportExcelBtn"
-            class="download-btn bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center">
-            <i class="fas fa-file-excel mr-2"></i> Export Excel
-          </button>
+    <!-- Report Container -->
+    <div id="reportContainer" class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <!-- Summary Card -->
+      <div id="reportSummary" class="bg-indigo-50 border-b border-indigo-100 p-6 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="report-card bg-white rounded-lg p-4">
+            <h3 class="text-gray-500 text-sm font-medium">จำนวนรายการ</h3>
+            <p id="totalOrders" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
+          </div>
+          <div class="report-card bg-white rounded-lg p-4">
+            <h3 class="text-gray-500 text-sm font-medium">ยอดรวมทั้งหมด</h3>
+            <p id="totalAmount" class="text-2xl font-bold text-green-600 mt-1">0 บาท</p>
+          </div>
+          <div class="report-card bg-white rounded-lg p-4">
+            <h3 class="text-gray-500 text-sm font-medium">ช่วงเวลา</h3>
+            <p id="dateRange" class="text-lg font-medium text-gray-700 mt-1">-</p>
+          </div>
         </div>
       </div>
 
-      <!-- Report Container -->
-      <div id="reportContainer" class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <!-- Summary Card -->
-        <div id="reportSummary" class="bg-indigo-50 border-b border-indigo-100 p-6 hidden">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="report-card bg-white rounded-lg p-4">
-              <h3 class="text-gray-500 text-sm font-medium">จำนวนรายการ</h3>
-              <p id="totalOrders" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
-            </div>
-            <div class="report-card bg-white rounded-lg p-4">
-              <h3 class="text-gray-500 text-sm font-medium">ยอดรวมทั้งหมด</h3>
-              <p id="totalAmount" class="text-2xl font-bold text-green-600 mt-1">0 บาท</p>
-            </div>
-            <div class="report-card bg-white rounded-lg p-4">
-              <h3 class="text-gray-500 text-sm font-medium">ช่วงเวลา</h3>
-              <p id="dateRange" class="text-lg font-medium text-gray-700 mt-1">-</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Results Table -->
-        <div id="reportResults" class="p-6 overflow-x-auto">
-          <div class="text-center py-12 text-gray-400">
-            <i class="fas fa-chart-bar text-4xl mb-3"></i>
-            <p class="text-lg">กรุณาเลือกงวดหวยเพื่อแสดงรายงาน</p>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <div id="detailModal" class="fixed inset-0 z-50 hidden">
-      <div class="flex items-center justify-center min-h-screen pt-2 px-2 pb-10 text-center sm:block sm:p-0">
-        <!-- Background overlay -->
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-
-        <!-- Modal content -->
-        <div
-          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full max-h-screen overflow-y-auto">
-          <div class="bg-white px-2 pt-5 pb-2 sm:p-6 sm:pb-2">
-            <div class="sm:flex sm:items-start">
-              <div class="mt-1 text-center sm:mt-0 sm:ml-2 sm:text-left w-full">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
-                  <i class="fas fa-receipt mr-2 text-indigo-600"></i>รายละเอียดบิล
-                </h3>
-                <div class="mt-1">
-                  <pre id="modalContent"
-                    class="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-2 rounded"></pre>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-gray-50 px-2 py-3 sm:px-3 sm:flex sm:flex-row-reverse">
-            <button id="closeModal" type="button"
-              class="mt-1 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-              ปิด
-            </button>
-          </div>
+      <!-- Results Table -->
+      <div id="reportResults" class="p-6 overflow-x-auto">
+        <div class="text-center py-12 text-gray-400">
+          <i class="fas fa-chart-bar text-4xl mb-3"></i>
+          <p class="text-lg">กรุณาเลือกงวดหวยเพื่อแสดงรายงาน</p>
         </div>
       </div>
     </div>
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module" src="./assets/js/scripts/report.js"></script>
-  </body>
+  </main>
+  <div id="detailModal" class="fixed inset-0 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen pt-0 px-2 pb-0 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+      </div>
+      <div
+        class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full max-h-screen overflow-y-auto">
+        <div class="bg-white px-2 pt-2 pb-1 sm:p-2 sm:pb-1">
+          <div class="sm:flex sm:items-start">
+            <div class="text-center sm:mt-0 sm:ml-2 sm:text-left w-full">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-1">
+                <i class="fas fa-receipt mr-1 text-indigo-600"></i>รายละเอียดบิล
+              </h3>
+              <pre id="modalContent"></pre>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-2 py-1 sm:px-2 sm:flex sm:flex-row-reverse">
+          <button id="closeModal" type="button"
+            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-2 sm:w-auto sm:text-sm">
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./assets/js/main.js"></script>
+  <script type="module" src="./assets/js/scripts/report.js"></script>
+</body>
 
 </html>
