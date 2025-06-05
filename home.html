@@ -1,275 +1,288 @@
 <!DOCTYPE html>
 <html lang="th">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>เจ้ามือหวย - ระบบจัดการหวยออนไลน์</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <style>
-      :root {
-        --primary-color: #4f46e5;
-        --secondary-color: #10b981;
-        --accent-color: #f59e0b;
-        --dark-color: #1e293b;
-        --light-color: #f8fafc;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เจ้ามือหวย - ระบบจัดการหวยออนไลน์</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
 
-      .gradient-bg {
-        background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
-      }
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+    }
 
-      .stat-card {
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      }
+    .stat-card {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
 
-      .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
 
-      .number-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: var(--accent-color);
-        color: white;
-        font-weight: bold;
-        margin-right: 8px;
-      }
+    .number-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      color: white;
+      font-weight: bold;
+      margin-right: 8px;
+    }
 
-      .lotto-type-tab {
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s ease;
-      }
+    .lotto-type-tab {
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
 
-      .lotto-type-tab.active {
-        border-bottom-color: var(--primary-color);
-        color: var(--primary-color);
-        font-weight: 600;
-      }
+    .lotto-type-tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
 
-      .lotto-number {
-        display: inline-block;
-        padding: 4px 12px;
-        margin: 4px;
-        border-radius: 20px;
-        background-color: #eef2ff;
-        color: var(--primary-color);
-        font-weight: 600;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      }
+    .lotto-number {
+      display: inline-block;
+      padding: 4px 12px;
+      margin: 4px;
+      border-radius: 20px;
+      background-color: #eef2ff;
+      color: var(--primary-color);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-      .lotto-amount {
-        color: var(--secondary-color);
-        font-weight: 600;
-      }
-    </style>
-  </head>
+    .lotto-amount {
+      color: var(--secondary-color);
+      font-weight: 600;
+    }
+  </style>
+</head>
 
-  <body class="bg-gray-50">
-    <header>
-      <div id="nav-placeholder"></div>
-      <div id="dialog-placeholder"></div>
-      <div id="lotto-placeholder"></div>
-    </header>
+<body class="bg-gray-50">
+  <header>
+    <div id="nav-placeholder"></div>
+    <div id="dialog-placeholder"></div>
+    <div id="lotto-placeholder"></div>
+    <div id="formContainer"></div>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <!-- Hero Banner -->
-      <div class="relative rounded-xl overflow-hidden mb-8">
-        <img src="assets/image/banner.jpg" alt="banner" class="w-full h-64 object-cover" />
-        <div class="absolute inset-0 gradient-bg bg-opacity-70 flex items-center justify-center">
-          <div class="text-center px-4">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">ระบบจัดการหวยออนไลน์</h1>
-            <p class="text-white text-lg opacity-90">บริหารจัดการหวยของคุณอย่างมืออาชีพ</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Hero Banner -->
+    <div class="relative rounded-xl overflow-hidden mb-8">
+      <img src="assets/image/banner.jpg" alt="banner" class="w-full h-64 object-cover" />
+      <div class="absolute inset-0 gradient-bg bg-opacity-70 flex items-center justify-center">
+        <div class="text-center px-4">
+          <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">ระบบจัดการหวยออนไลน์</h1>
+          <p class="text-white text-lg opacity-90">บริหารจัดการหวยของคุณอย่างมืออาชีพ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Total Prize Card -->
+      <div class="stat-card bg-white rounded-xl p-6 flex items-center">
+        <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
+          <i class="fas fa-coins text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-gray-500 text-sm font-medium">ยอดรวมงวดปัจจุบัน</h3>
+          <div class="flex items-baseline mt-1">
+            <span class="text-3xl font-bold text-indigo-600" id="totalTicketsPrize">0</span>
+            <span class="text-gray-500 ml-2">บาท</span>
           </div>
         </div>
       </div>
 
-      <!-- Stats Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <!-- Total Prize Card -->
-        <div class="stat-card bg-white rounded-xl p-6 flex items-center">
-          <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
-            <i class="fas fa-coins text-xl"></i>
-          </div>
-          <div>
-            <h3 class="text-gray-500 text-sm font-medium">ยอดรวมงวดปัจจุบัน</h3>
-            <div class="flex items-baseline mt-1">
-              <span class="text-3xl font-bold text-indigo-600" id="totalTicketsPrize">0</span>
-              <span class="text-gray-500 ml-2">บาท</span>
-            </div>
-          </div>
+      <!-- Total Tickets Card -->
+      <div class="stat-card bg-white rounded-xl p-6 flex items-center">
+        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+          <i class="fas fa-receipt text-xl"></i>
         </div>
-
-        <!-- Total Tickets Card -->
-        <div class="stat-card bg-white rounded-xl p-6 flex items-center">
-          <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-            <i class="fas fa-receipt text-xl"></i>
-          </div>
-          <div>
-            <h3 class="text-gray-500 text-sm font-medium">บิลทั้งหมด</h3>
-            <div class="flex items-baseline mt-1">
-              <span class="text-3xl font-bold text-green-600" id="totalTicketsAmount">0</span>
-              <span class="text-gray-500 ml-2">บิล</span>
-            </div>
+        <div>
+          <h3 class="text-gray-500 text-sm font-medium">บิลทั้งหมด</h3>
+          <div class="flex items-baseline mt-1">
+            <span class="text-3xl font-bold text-green-600" id="totalTicketsAmount">0</span>
+            <span class="text-gray-500 ml-2">บิล</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-3 sm:space-y-0">
+      <!-- กลุ่มปุ่มซ้าย -->
+      <div class="flex space-x-3">
         <button onclick="document.location='addLotto.html'"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium flex items-center transition-colors">
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
           <i class="fas fa-plus-circle mr-2"></i> เพิ่มโพยหวย
         </button>
-
-        <div class="flex space-x-3 mt-4 sm:mt-0">
-          <button id="btnShowData"
-            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
-            <i class="fas fa-chart-bar mr-2"></i> แสดงข้อมูลปัจจุบัน
-          </button>
-          <button id="btnClearData"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
-            <i class="fas fa-broom mr-2"></i> ล้างข้อมูล
-          </button>
-        </div>
+        <button id="openFormBtn">เพิ่มโพย</button>
+        <!-- <button id="openFormBtn"
+          class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-edit mr-2"></i> แก้ไขโพย
+          <button id="openFormBtn">เพิ่มโพย</button>
+        </button> -->
       </div>
 
-      <!-- Date Range Info -->
-      <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-6">
-        <p class="text-sm text-indigo-800">
-          <i class="fas fa-calendar-alt mr-2"></i> แสดงข้อมูลตั้งแต่วันที่:
-          <span id="showFormDateToDate" class="font-medium"></span>
-        </p>
+      <!-- กลุ่มปุ่มขวา -->
+      <div class="flex space-x-3">
+        <button id="btnShowData"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-chart-bar mr-2"></i> แสดงข้อมูลปัจจุบัน
+        </button>
+        <button id="btnClearData"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-broom mr-2"></i> ล้างข้อมูล
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Date Range Info -->
+    <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-6">
+      <p class="text-sm text-indigo-800">
+        <i class="fas fa-calendar-alt mr-2"></i> แสดงข้อมูลตั้งแต่วันที่:
+        <span id="showFormDateToDate" class="font-medium"></span>
+      </p>
+    </div>
+
+    <!-- Popular Numbers Section -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="border-b border-gray-200 px-6 py-4">
+        <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+          <i class="fas fa-star mr-2 text-yellow-500"></i> ตัวเลขที่มีคนซื้อเยอะที่สุด
+        </h2>
+        <p class="text-xs text-gray-500 mt-1">แสดง 5 อันดับแรกของแต่ละประเภท</p>
       </div>
 
-      <!-- Popular Numbers Section -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="border-b border-gray-200 px-6 py-4">
-          <h2 class="text-lg font-semibold text-gray-800 flex items-center">
-            <i class="fas fa-star mr-2 text-yellow-500"></i> ตัวเลขที่มีคนซื้อเยอะที่สุด
-          </h2>
-          <p class="text-xs text-gray-500 mt-1">แสดง 5 อันดับแรกของแต่ละประเภท</p>
-        </div>
+      <div id="resultContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6"></div>
+    </div>
+  </main>
 
-        <div id="resultContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6"></div>
-      </div>
-    </main>
+  <footer class="mt-12 text-center pb-8">
+    <p class="text-sm text-gray-500">ระบบจัดการหวยออนไลน์ &copy; 2023</p>
+  </footer>
 
-    <footer class="mt-12 text-center pb-8">
-      <p class="text-sm text-gray-500">ระบบจัดการหวยออนไลน์ &copy; 2023</p>
-    </footer>
+  <script type="module" src="./assets/js/main.js"></script>
+  <script type="module" src="./assets/js/scripts/editLottoform.js"></script>
+  <script type="module">
+    // สคริปต์นี้ดึงข้อมูลจาก Firestore เพื่อแสดงผลยอดรวม บิลทั้งหมด และเลขยอดนิยม 5 อันดับ
 
-    <script type="module" src="./assets/js/main.js"></script>
-    <script type="module">
-      // สคริปต์นี้ดึงข้อมูลจาก Firestore เพื่อแสดงผลยอดรวม บิลทั้งหมด และเลขยอดนิยม 5 อันดับ
+    import { db } from './assets/js/api/firebaseConfig.js';
+    import {
+      collection,
+      query,
+      where,
+      getDocs,
+      Timestamp,
+      orderBy,
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-      import { db } from './assets/js/api/firebaseConfig.js';
-      import {
-        collection,
-        query,
-        where,
-        getDocs,
-        Timestamp,
-        orderBy,
-      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    function getCurrentDateRange() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const day = now.getDate();
 
-      function getCurrentDateRange() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth();
-        const day = now.getDate();
+      let fromDate, toDate;
 
-        let fromDate, toDate;
-
-        if (day >= 5 && day <= 18) {
-          fromDate = new Date(year, month, 5);
-          toDate = new Date(year, month, 18, 23, 59, 59);
-        } else {
-          // หากวันที่ 25-31 หรือ 1-2 ให้ใช้ช่วง 25 ของเดือนก่อน ถึง 2 ของเดือนถัดไป
-          const fromMonth = day < 5 ? month - 1 : month;
-          const toMonth = day < 5 ? month : month + 1;
-          fromDate = new Date(year, fromMonth, 25);
-          toDate = new Date(year, toMonth, 2, 23, 59, 59);
-        }
-
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return {
-          fromTimestamp: Timestamp.fromDate(fromDate),
-          toTimestamp: Timestamp.fromDate(toDate),
-          formatted: `${fromDate.toLocaleDateString('th-TH', options)} - ${toDate.toLocaleDateString('th-TH', options)}`
-        };
+      if (day >= 5 && day <= 18) {
+        fromDate = new Date(year, month, 5);
+        toDate = new Date(year, month, 18, 23, 59, 59);
+      } else {
+        // หากวันที่ 25-31 หรือ 1-2 ให้ใช้ช่วง 25 ของเดือนก่อน ถึง 2 ของเดือนถัดไป
+        const fromMonth = day < 5 ? month - 1 : month;
+        const toMonth = day < 5 ? month : month + 1;
+        fromDate = new Date(year, fromMonth, 25);
+        toDate = new Date(year, toMonth, 2, 23, 59, 59);
       }
 
-      async function showDataCurrent() {
-        try {
-          const { fromTimestamp, toTimestamp, formatted } = getCurrentDateRange();
-          document.getElementById("showFormDateToDate").innerText = formatted;
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return {
+        fromTimestamp: Timestamp.fromDate(fromDate),
+        toTimestamp: Timestamp.fromDate(toDate),
+        formatted: `${fromDate.toLocaleDateString('th-TH', options)} - ${toDate.toLocaleDateString('th-TH', options)}`
+      };
+    }
 
-          const q = query(
-            collection(db, "lottoTickets"),
-            where("timestamp", ">=", fromTimestamp),
-            where("timestamp", "<=", toTimestamp)
-          );
+    async function showDataCurrent() {
+      try {
+        const { fromTimestamp, toTimestamp, formatted } = getCurrentDateRange();
+        document.getElementById("showFormDateToDate").innerText = formatted;
 
-          const snapshot = await getDocs(q);
-          let totalPrize = 0;
-          let totalTickets = 0;
+        const q = query(
+          collection(db, "lottoTickets"),
+          where("timestamp", ">=", fromTimestamp),
+          where("timestamp", "<=", toTimestamp)
+        );
 
-          const counter = {
-            "สามตัวตรง": {},
-            "สามตัวโต๊ด": {},
-            "บน": {},
-            "ล่าง": {}
-          };
+        const snapshot = await getDocs(q);
+        let totalPrize = 0;
+        let totalTickets = 0;
 
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            totalTickets++;
-            totalPrize += data["ยอดรวม"] || 0;
+        const counter = {
+          "สามตัวตรง": {},
+          "สามตัวโต๊ด": {},
+          "บน": {},
+          "ล่าง": {}
+        };
 
-            const types = data["ประเภท"] || {};
-            for (const [type, items] of Object.entries(types)) {
-              for (const item of items) {
-                const key = (type === "บน" || type === "ล่าง")
-                  ? item.เลข.toString().padStart(2, '0')  // สำหรับเลข 2 ตัว
-                  : item.เลข.toString().padStart(3, '0'); // สำหรับเลข 3 ตัว
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          totalTickets++;
+          totalPrize += data["ยอดรวม"] || 0;
 
-                if (!counter[type][key]) {
-                  counter[type][key] = 0;
-                }
-                counter[type][key] += item.เงิน;
+          const types = data["ประเภท"] || {};
+          for (const [type, items] of Object.entries(types)) {
+            for (const item of items) {
+              const key = (type === "บน" || type === "ล่าง")
+                ? item.เลข.toString().padStart(2, '0')  // สำหรับเลข 2 ตัว
+                : item.เลข.toString().padStart(3, '0'); // สำหรับเลข 3 ตัว
+
+              if (!counter[type][key]) {
+                counter[type][key] = 0;
               }
+              counter[type][key] += item.เงิน;
             }
-          });
+          }
+        });
 
-          document.getElementById("totalTicketsPrize").innerText = totalPrize.toLocaleString('th-TH');
-          document.getElementById("totalTicketsAmount").innerText = totalTickets.toLocaleString('th-TH');
+        document.getElementById("totalTicketsPrize").innerText = totalPrize.toLocaleString('th-TH');
+        document.getElementById("totalTicketsAmount").innerText = totalTickets.toLocaleString('th-TH');
 
-          const resultDiv = document.getElementById("resultContainer");
-          resultDiv.innerHTML = "";
+        const resultDiv = document.getElementById("resultContainer");
+        resultDiv.innerHTML = "";
 
-          const typeIcons = {
-            "สามตัวตรง": "fa-hashtag",
-            "สามตัวโต๊ด": "fa-random",
-            "บน": "fa-arrow-up",
-            "ล่าง": "fa-arrow-down"
-          };
+        const typeIcons = {
+          "สามตัวตรง": "fa-hashtag",
+          "สามตัวโต๊ด": "fa-random",
+          "บน": "fa-arrow-up",
+          "ล่าง": "fa-arrow-down"
+        };
 
-          for (const type of ["สามตัวตรง", "สามตัวโต๊ด", "บน", "ล่าง"]) {
-            const sorted = Object.entries(counter[type] || {})
-              .sort((a, b) => b[1] - a[1])
-              .slice(0, 5);
+        for (const type of ["สามตัวตรง", "สามตัวโต๊ด", "บน", "ล่าง"]) {
+          const sorted = Object.entries(counter[type] || {})
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
 
-            const html = `
+          const html = `
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="flex items-center mb-3">
                 <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -290,27 +303,27 @@
               </ul>
             </div>
           `;
-            resultDiv.innerHTML += html;
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          alert("เกิดข้อผิดพลาดในการดึงข้อมูล: " + error.message);
+          resultDiv.innerHTML += html;
         }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        alert("เกิดข้อผิดพลาดในการดึงข้อมูล: " + error.message);
       }
+    }
 
-      function clearDataForm() {
-        document.getElementById("totalTicketsPrize").innerText = "0";
-        document.getElementById("totalTicketsAmount").innerText = "0";
-        document.getElementById("resultContainer").innerHTML = "";
-        document.getElementById("showFormDateToDate").innerText = "";
-      }
+    function clearDataForm() {
+      document.getElementById("totalTicketsPrize").innerText = "0";
+      document.getElementById("totalTicketsAmount").innerText = "0";
+      document.getElementById("resultContainer").innerHTML = "";
+      document.getElementById("showFormDateToDate").innerText = "";
+    }
 
-      // Add event listeners after DOM is loaded
-      document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('btnShowData').addEventListener('click', showDataCurrent);
-        document.getElementById('btnClearData').addEventListener('click', clearDataForm);
-      });
-    </script>
-  </body>
+    // Add event listeners after DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btnShowData').addEventListener('click', showDataCurrent);
+      document.getElementById('btnClearData').addEventListener('click', clearDataForm);
+    });
+  </script>
+</body>
 
 </html>
