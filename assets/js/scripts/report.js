@@ -144,6 +144,17 @@ document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("detailModal").classList.add("hidden");
 });
 
+document.getElementById("saveAsImage").addEventListener("click", () => {
+  const bill = document.getElementById("billContent");
+
+  html2canvas(bill, { scale: 4 }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = `bill-${Date.now()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
+
 
 // ฟังก์ชันโหลดข้อมูลรายงาน
 async function loadReportData(selectedRound) {
