@@ -9,7 +9,7 @@ import { db } from "../api/firebaseConfig.js";
 function getDateRangesToday() {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0-based
+  const month = now.getMonth();
 
   const startA = new Date(year, month, 5);
   const endA = new Date(year, month, 18, 23, 59, 59);
@@ -24,47 +24,71 @@ function getDateRangesToday() {
 }
 
 let allFilteredTickets = [];
+let currentDocIdToDelete = null;
 
 export async function loadTickets() {
-  const { rangeA, rangeB } = getDateRangesToday();
-  const snapshot = await getDocs(collection(db, "lottoTickets"));
+  try {
+    const select = document.getElementById("ticketSelect");
+    select.innerHTML = '<option disabled selected>กำลังโหลดงวดหวย...</option>';
+    
+    const { rangeA, rangeB } = getDateRangesToday();
+    const snapshot = await getDocs(collection(db, "lottoTickets"));
 
-  allFilteredTickets = [];
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const ts = data.timestamp?.toDate();
-    if (!ts) return;
+    allFilteredTickets = [];
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const ts = data.timestamp?.toDate();
+      if (!ts) return;
 
-    if ((ts >= rangeA.start && ts <= rangeA.end) || (ts >= rangeB.start && ts <= rangeB.end)) {
-      allFilteredTickets.push({ id: docSnap.id, ...data });
-    }
-  });
+      if ((ts >= rangeA.start && ts <= rangeA.end) || (ts >= rangeB.start && ts <= rangeB.end)) {
+        allFilteredTickets.push({ id: docSnap.id, ...data });
+      }
+    });
 
-  renderSelectOptions(allFilteredTickets);
+    renderSelectOptions(allFilteredTickets);
+  } catch (error) {
+    console.error("Error loading tickets:", error);
+    const select = document.getElementById("ticketSelect");
+    select.innerHTML = '<option disabled selected>เกิดข้อผิดพลาดในการโหลดข้อมูล</option>';
+  }
 }
 
 function renderSelectOptions(tickets) {
   const select = document.getElementById("ticketSelect");
-  select.innerHTML = '<option disabled selected>เลือกงวด</option>';
+  select.innerHTML = '<option disabled selected>เลือกงวดหวย</option>';
+
+  if (tickets.length === 0) {
+    select.innerHTML = '<option disabled selected>ไม่พบโพยหวย</option>';
+    return;
+  }
 
   const uniqueDates = new Set();
   tickets.forEach((t) => {
-    const dateStr = t.timestamp.toDate().toLocaleDateString("th-TH");
+    const dateStr = t.timestamp.toDate().toLocaleDateString("th-TH", {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
     uniqueDates.add(dateStr);
   });
 
-  Array.from(uniqueDates).forEach(dateStr => {
+  Array.from(uniqueDates).sort((a, b) => {
+    return new Date(b) - new Date(a);
+  }).forEach(dateStr => {
     const opt = document.createElement("option");
     opt.value = dateStr;
     opt.textContent = `งวดวันที่ ${dateStr}`;
     select.appendChild(opt);
   });
 
-  // เมื่อเลือกงวด ค่อยแสดงรายการ
   select.addEventListener("change", () => {
     const selectedDate = select.value;
     const filtered = allFilteredTickets.filter(t => {
-      const d = t.timestamp.toDate().toLocaleDateString("th-TH");
+      const d = t.timestamp.toDate().toLocaleDateString("th-TH", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
       return d === selectedDate;
     });
     renderTicketRows(filtered);
@@ -75,32 +99,130 @@ function renderTicketRows(tickets) {
   const tbody = document.getElementById("ticketTableBody");
   tbody.innerHTML = "";
 
-  tickets.forEach((t) => {
+  if (tickets.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+          ไม่พบโพยหวยในงวดที่เลือก
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tickets.forEach((t, index) => {
     const row = document.createElement("tr");
+    row.className = "table-row";
+    
+    const dateOptions = {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    
     row.innerHTML = `
-      <td class="p-2 border">${t["ชื่อผู้ซื้อ"] || "-"}</td>
-      <td class="p-2 border text-right">${(t["ยอดรวม"] || 0).toLocaleString("th-TH")}</td>
-      <td class="p-2 border">${t.timestamp.toDate().toLocaleDateString("th-TH")}</td>
-      <td class="p-2 border text-center">
-        <button class="text-red-500 hover:underline" onclick="confirmDelete('${t.id}')">ลบ</button>
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        ${t["ชื่อผู้ซื้อ"] || "ไม่ระบุชื่อ"}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">
+        ${(t["ยอดรวม"] || 0).toLocaleString("th-TH")} บาท
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        ${t.timestamp.toDate().toLocaleDateString("th-TH", dateOptions)}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+        <button 
+          class="delete-btn text-red-600 hover:text-red-800 font-medium"
+          data-id="${t.id}"
+        >
+          <i class="fas fa-trash-alt mr-1"></i> ลบ
+        </button>
       </td>
     `;
+    
     tbody.appendChild(row);
+  });
+
+  // Add event listeners to all delete buttons
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentDocIdToDelete = btn.getAttribute('data-id');
+      showDeleteModal();
+    });
   });
 }
 
-window.confirmDelete = async function (docId) {
-  if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบโพยนี้?")) {
-    await deleteDoc(doc(db, "lottoTickets", docId));
-    alert("✅ ลบโพยเรียบร้อย");
-    loadTickets(); // โหลดใหม่แล้วจะรีเซ็ต dropdown + รายการ
+function showDeleteModal() {
+  const modal = document.getElementById('deleteModal');
+  modal.classList.remove('hidden');
+  
+  document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    modal.classList.add('hidden');
+    await deleteTicket();
+  });
+  
+  document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+    modal.classList.add('hidden');
+    currentDocIdToDelete = null;
+  });
+}
+
+async function deleteTicket() {
+  if (!currentDocIdToDelete) return;
+  
+  try {
+    await deleteDoc(doc(db, "lottoTickets", currentDocIdToDelete));
+    
+    // Show success message
+    const tbody = document.getElementById("ticketTableBody");
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="px-6 py-4 text-center">
+          <div class="bg-green-50 text-green-700 p-3 rounded-md inline-flex items-center">
+            <i class="fas fa-check-circle mr-2"></i> ลบโพยเรียบร้อยแล้ว
+          </div>
+        </td>
+      </tr>
+    `;
+    
+    // Reload tickets after 1.5 seconds
+    setTimeout(() => {
+      loadTickets();
+    }, 1500);
+    
+  } catch (error) {
+    console.error("Error deleting ticket:", error);
+    const tbody = document.getElementById("ticketTableBody");
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="px-6 py-4 text-center">
+          <div class="bg-red-50 text-red-700 p-3 rounded-md inline-flex items-center">
+            <i class="fas fa-exclamation-circle mr-2"></i> เกิดข้อผิดพลาดในการลบโพย
+          </div>
+        </td>
+      </tr>
+    `;
+  } finally {
+    currentDocIdToDelete = null;
   }
-};
+}
 
-loadTickets();
-
-document.getElementById("clearSelect").addEventListener("click", () => {
-  const select = document.getElementById("ticketSelect");
-  select.selectedIndex = 0; // กลับไปเป็น "เลือกงวด"
-  document.getElementById("ticketTableBody").innerHTML = ""; // เคลียร์ตาราง
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  loadTickets();
+  
+  document.getElementById("clearSelect").addEventListener("click", () => {
+    const select = document.getElementById("ticketSelect");
+    select.selectedIndex = 0;
+    document.getElementById("ticketTableBody").innerHTML = `
+      <tr>
+        <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+          กรุณาเลือกงวดเพื่อแสดงรายการโพย
+        </td>
+      </tr>
+    `;
+  });
 });
