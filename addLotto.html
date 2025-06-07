@@ -481,7 +481,8 @@
         .split("\n");
 
       if (!buyer || resultLines.length === 0) {
-        alert("กรุณากรอกชื่อผู้ซื้อ และโพยก่อนบันทึก");
+        alert("กรุณากรอกชื่อผู้ซื้อโพย ก่อนบันทึก");
+
         return;
       }
 
@@ -523,7 +524,7 @@
       document.getElementById("lottoInput").value = "";
       document.getElementById("outputResult").value = "";
       document.getElementById("totalAmount").textContent = "- บาท";
-      document.getElementById("percentGroup").value = "ไม่ระบุ";
+      document.getElementById("percentGroup").value = "";
 
     };
 
