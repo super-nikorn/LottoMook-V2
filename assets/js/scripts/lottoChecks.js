@@ -135,7 +135,18 @@ async function checkTicketsAgainstResults(dateStr, resultData) {
       return;
     }
 
-    const ticketsSnapshot = await getDocs(collection(db, "lottoTickets"));
+    // ✅ ใช้ collection ตามชื่อผู้ใช้
+    const user = localStorage.getItem("activeUser") || "default";
+    const collectionName = `lottoTickets${capitalize(user)}`;
+
+    const ticketsRef = collection(db, collectionName);
+    const ticketsQuery = query(
+      ticketsRef,
+      where("timestamp", ">=", dateRange.start),
+      where("timestamp", "<=", dateRange.end)
+    );
+    const ticketsSnapshot = await getDocs(ticketsQuery);
+
     resultArea.innerHTML = "";
 
     if (ticketsSnapshot.empty) {
@@ -146,6 +157,9 @@ async function checkTicketsAgainstResults(dateStr, resultData) {
         </div>
       `;
       return;
+    }
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     const firstPrize = resultData.firstPrize || "";

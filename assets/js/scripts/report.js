@@ -175,8 +175,13 @@ async function loadReportData(selectedRound) {
     const roundDate = thaiDateToDate(roundData.date);
     const dateRange = calculateDateRange(roundData.date);
 
-    // ดึงข้อมูลการซื้อลอตเตอรี่ในช่วงเวลาที่กำหนด
-    const ticketsRef = collection(db, "lottoTickets");
+
+    // ✅ ดึง user ปัจจุบันจาก localStorage
+    const user = localStorage.getItem("activeUser") || "default";
+    const collectionName = `lottoTickets${capitalize(user)}`;
+
+    // ✅ ดึงข้อมูลการซื้อลอตเตอรี่ในช่วงเวลาที่กำหนด
+    const ticketsRef = collection(db, collectionName);
     const ticketsQuery = query(
       ticketsRef,
       where("timestamp", ">=", dateRange.start),
@@ -184,6 +189,12 @@ async function loadReportData(selectedRound) {
     );
 
     const ticketsSnap = await getDocs(ticketsQuery);
+
+    // ✅ ตัวช่วยแปลงตัวอักษรขึ้นต้นเป็นพิมพ์ใหญ่ เช่น "nikorn" → "Nikorn"
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
 
     // สร้างตารางแสดงผล
     const table = document.createElement("table");

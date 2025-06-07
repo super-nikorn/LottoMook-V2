@@ -219,8 +219,12 @@
         const { fromTimestamp, toTimestamp, formatted } = getCurrentDateRange();
         document.getElementById("showFormDateToDate").innerText = formatted;
 
+        // ✅ ดึงชื่อผู้ใช้จาก localStorage
+        const user = localStorage.getItem("activeUser") || "default";
+        const collectionName = `lottoTickets${capitalize(user)}`;
+
         const q = query(
-          collection(db, "lottoTickets"),
+          collection(db, collectionName),
           where("timestamp", ">=", fromTimestamp),
           where("timestamp", "<=", toTimestamp)
         );
@@ -236,45 +240,55 @@
           "ล่าง": {}
         };
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          totalTickets++;
-          totalPrize += data["ยอดรวม"] || 0;
+        // ✅ ใส่โค้ดการประมวลผลอื่น ๆ ต่อที่นี่...
 
-          const types = data["ประเภท"] || {};
-          for (const [type, items] of Object.entries(types)) {
-            for (const item of items) {
-              const key = (type === "บน" || type === "ล่าง")
-                ? item.เลข.toString().padStart(2, '0')  // สำหรับเลข 2 ตัว
-                : item.เลข.toString().padStart(3, '0'); // สำหรับเลข 3 ตัว
 
-              if (!counter[type][key]) {
-                counter[type][key] = 0;
-              }
-              counter[type][key] += item.เงิน;
-            }
+
+    // ✅ ตัวช่วยแปลงชื่อ user ให้ขึ้นต้นด้วยตัวพิมพ์ใหญ่
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      totalTickets++;
+      totalPrize += data["ยอดรวม"] || 0;
+
+      const types = data["ประเภท"] || {};
+      for (const [type, items] of Object.entries(types)) {
+        for (const item of items) {
+          const key = (type === "บน" || type === "ล่าง")
+            ? item.เลข.toString().padStart(2, '0')  // สำหรับเลข 2 ตัว
+            : item.เลข.toString().padStart(3, '0'); // สำหรับเลข 3 ตัว
+
+          if (!counter[type][key]) {
+            counter[type][key] = 0;
           }
-        });
+          counter[type][key] += item.เงิน;
+        }
+      }
+    });
 
-        document.getElementById("totalTicketsPrize").innerText = totalPrize.toLocaleString('th-TH');
-        document.getElementById("totalTicketsAmount").innerText = totalTickets.toLocaleString('th-TH');
+    document.getElementById("totalTicketsPrize").innerText = totalPrize.toLocaleString('th-TH');
+    document.getElementById("totalTicketsAmount").innerText = totalTickets.toLocaleString('th-TH');
 
-        const resultDiv = document.getElementById("resultContainer");
-        resultDiv.innerHTML = "";
+    const resultDiv = document.getElementById("resultContainer");
+    resultDiv.innerHTML = "";
 
-        const typeIcons = {
-          "สามตัวตรง": "fa-hashtag",
-          "สามตัวโต๊ด": "fa-random",
-          "บน": "fa-arrow-up",
-          "ล่าง": "fa-arrow-down"
-        };
+    const typeIcons = {
+      "สามตัวตรง": "fa-hashtag",
+      "สามตัวโต๊ด": "fa-random",
+      "บน": "fa-arrow-up",
+      "ล่าง": "fa-arrow-down"
+    };
 
-        for (const type of ["สามตัวตรง", "สามตัวโต๊ด", "บน", "ล่าง"]) {
-          const sorted = Object.entries(counter[type] || {})
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5);
+    for (const type of ["สามตัวตรง", "สามตัวโต๊ด", "บน", "ล่าง"]) {
+      const sorted = Object.entries(counter[type] || {})
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
 
-          const html = `
+      const html = `
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="flex items-center mb-3">
                 <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -295,12 +309,12 @@
               </ul>
             </div>
           `;
-          resultDiv.innerHTML += html;
-        }
+      resultDiv.innerHTML += html;
+    }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        alert("เกิดข้อผิดพลาดในการดึงข้อมูล: " + error.message);
-      }
+      console.error("Error fetching data:", error);
+      alert("เกิดข้อผิดพลาดในการดึงข้อมูล: " + error.message);
+    }
     }
 
     function clearDataForm() {
@@ -315,6 +329,12 @@
       document.getElementById('btnShowData').addEventListener('click', showDataCurrent);
       document.getElementById('btnClearData').addEventListener('click', clearDataForm);
     });
+  </script>
+
+  <script type="module">
+    import { user } from './assets/js/context.js';
+    const collectionName = `${user}_lottoTickets`;
+    console.log("คุณคือ", user);
   </script>
 </body>
 

@@ -30,9 +30,13 @@ export async function loadTickets() {
   try {
     const select = document.getElementById("ticketSelect");
     select.innerHTML = '<option disabled selected>กำลังโหลดงวดหวย...</option>';
-    
+
+    // ✅ ดึงชื่อ collection ตาม user
+    const user = localStorage.getItem("activeUser") || "default";
+    const collectionName = `lottoTickets${capitalize(user)}`;
+
     const { rangeA, rangeB } = getDateRangesToday();
-    const snapshot = await getDocs(collection(db, "lottoTickets"));
+    const snapshot = await getDocs(collection(db, collectionName));
 
     allFilteredTickets = [];
     snapshot.forEach((docSnap) => {
@@ -52,6 +56,7 @@ export async function loadTickets() {
     select.innerHTML = '<option disabled selected>เกิดข้อผิดพลาดในการโหลดข้อมูล</option>';
   }
 }
+
 
 function renderSelectOptions(tickets) {
   const select = document.getElementById("ticketSelect");
@@ -113,7 +118,7 @@ function renderTicketRows(tickets) {
   tickets.forEach((t, index) => {
     const row = document.createElement("tr");
     row.className = "table-row";
-    
+
     const dateOptions = {
       day: 'numeric',
       month: 'short',
@@ -121,7 +126,7 @@ function renderTicketRows(tickets) {
       hour: '2-digit',
       minute: '2-digit'
     };
-    
+
     row.innerHTML = `
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         ${t["ชื่อผู้ซื้อ"] || "ไม่ระบุชื่อ"}
@@ -141,7 +146,7 @@ function renderTicketRows(tickets) {
         </button>
       </td>
     `;
-    
+
     tbody.appendChild(row);
   });
 
@@ -158,12 +163,12 @@ function renderTicketRows(tickets) {
 function showDeleteModal() {
   const modal = document.getElementById('deleteModal');
   modal.classList.remove('hidden');
-  
+
   document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
     modal.classList.add('hidden');
     await deleteTicket();
   });
-  
+
   document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
     modal.classList.add('hidden');
     currentDocIdToDelete = null;
@@ -172,10 +177,14 @@ function showDeleteModal() {
 
 async function deleteTicket() {
   if (!currentDocIdToDelete) return;
-  
+
   try {
-    await deleteDoc(doc(db, "lottoTickets", currentDocIdToDelete));
-    
+    // ✅ ใช้ collection ของ user
+    const user = localStorage.getItem("activeUser") || "default";
+    const collectionName = `lottoTickets${capitalize(user)}`;
+
+    await deleteDoc(doc(db, collectionName, currentDocIdToDelete));
+
     // Show success message
     const tbody = document.getElementById("ticketTableBody");
     tbody.innerHTML = `
@@ -187,12 +196,11 @@ async function deleteTicket() {
         </td>
       </tr>
     `;
-    
-    // Reload tickets after 1.5 seconds
+
     setTimeout(() => {
-      loadTickets();
+      loadTickets(); // ✅ โหลดใหม่หลังลบ
     }, 1500);
-    
+
   } catch (error) {
     console.error("Error deleting ticket:", error);
     const tbody = document.getElementById("ticketTableBody");
@@ -210,10 +218,14 @@ async function deleteTicket() {
   }
 }
 
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadTickets();
-  
+
   document.getElementById("clearSelect").addEventListener("click", () => {
     const select = document.getElementById("ticketSelect");
     select.selectedIndex = 0;

@@ -171,6 +171,11 @@
 
     <script type="module" src="./assets/js/scripts/deleteTickets.js"></script>
     <script type="module" src="./assets/js/main.js"></script>
+    <script type="module">
+        import { user } from './assets/js/context.js';
+        const collectionName = `${user}_lottoTickets`;
+        console.log("คุณคือ", user);
+    </script>
 </body>
 
 </html>

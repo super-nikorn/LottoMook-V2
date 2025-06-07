@@ -9,14 +9,26 @@ export async function saveToDatabase(payload) {
   const buyer = payload["ชื่อผู้ซื้อ"];
   const nowDate = new Date().toISOString().split("T")[0];
   const documentId = `${nowDate}_${buyer.replace(/\s+/g, "_")}`;
-  // เพิ่ม timestamp ลงใน payload
-  payload.timestamp = Timestamp.now(); // ✅ ใส่ timestamp อย่างเดียว
+
+  // ✅ ดึงชื่อ user จาก localStorage
+  const user = localStorage.getItem("activeUser") || "default";
+
+  // ✅ ตั้งชื่อ collection ตาม user เช่น lottoTicketsNikorn
+  const collectionName = `lottoTickets${capitalize(user)}`;
+
+  // ✅ เพิ่ม timestamp ลงใน payload
+  payload.timestamp = Timestamp.now();
 
   try {
-    await setDoc(doc(db, "lottoTickets", documentId), payload);
+    await setDoc(doc(db, collectionName, documentId), payload);
     alert("✅ บันทึกโพยเรียบร้อยแล้ว");
   } catch (error) {
     console.error("❌ บันทึกไม่สำเร็จ:", error);
     alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล");
   }
+}
+
+// ฟังก์ชันช่วยแปลง n → N
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

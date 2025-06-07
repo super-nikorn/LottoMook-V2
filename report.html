@@ -167,6 +167,16 @@
   </div>
   <script type="module" src="./assets/js/main.js"></script>
   <script type="module" src="./assets/js/scripts/report.js"></script>
+
+  <script type="module">
+    import { user } from './assets/js/context.js';
+
+    // ใช้ user เป็น prefix ชื่อ collection ได้เลย
+    const collectionName = `${user}_lottoTickets`; // เช่น mook_lottoTickets
+
+    console.log("คุณคือ:", user);
+  </script>
+
 </body>
 
 </html>
