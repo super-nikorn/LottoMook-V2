@@ -218,22 +218,37 @@ async function loadReportData(selectedRound) {
     tbody.className = "bg-white divide-y divide-gray-200";
 
     let totalAmount = 0;
-    ticketsSnap.forEach((doc, index) => {
+    let countNotSpecified = 0, totalNotSpecified = 0;
+    let count15 = 0, total15 = 0;
+    let count20 = 0, total20 = 0;
+
+    ticketsSnap.forEach((doc) => {
       const data = doc.data();
-      totalAmount += data.ยอดรวม || 0;
+      const amount = data.ยอดรวม || 0;
+      const group = data.percentGroup || "";
+      totalAmount += amount;
 
-      const row = document.createElement("tr");
-      row.className = "table-row hover:bg-gray-50 cursor-pointer";
-      row.addEventListener('click', () => showBillDetail(data));
+      if (group === "15%") {
+        count15++; total15 += amount;
+      } else if (group === "20%") {
+        count20++; total20 += amount;
+      } else {
+        countNotSpecified++; totalNotSpecified += amount;
+      }
 
-      // แปลงประเภทการซื้อเป็นข้อความ
-      const types = [];
-      if (data.ประเภท.สามตัวตรง?.length > 0) types.push("สามตัวตรง");
-      if (data.ประเภท.สามตัวโต๊ด?.length > 0) types.push("สามตัวโต๊ด");
-      if (data.ประเภท.บน?.length > 0) types.push("บน");
-      if (data.ประเภท.ล่าง?.length > 0) types.push("ล่าง");
 
-      row.innerHTML = `
+    const row = document.createElement("tr");
+    row.className = "table-row hover:bg-gray-50 cursor-pointer";
+    row.addEventListener('click', () => showBillDetail(data));
+
+    // แปลงประเภทการซื้อเป็นข้อความ
+    const types = [];
+    if (data.ประเภท.สามตัวตรง?.length > 0) types.push("สามตัวตรง");
+    if (data.ประเภท.สามตัวโต๊ด?.length > 0) types.push("สามตัวโต๊ด");
+    if (data.ประเภท.บน?.length > 0) types.push("บน");
+    if (data.ประเภท.ล่าง?.length > 0) types.push("ล่าง");
+
+    row.innerHTML = `
   
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${data['ชื่อผู้ซื้อ'] || '-'}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatThaiDate(data.timestamp.toDate())}</td>
@@ -241,48 +256,57 @@ async function loadReportData(selectedRound) {
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${(data.ยอดรวม || 0).toLocaleString('th-TH')} บาท</td>
       `;
 
-      tbody.appendChild(row);
-    });
+    tbody.appendChild(row);
+  });
 
 
 
-    table.appendChild(tbody);
+  table.appendChild(tbody);
 
-    // แสดงผลข้อมูล
-    reportResults.innerHTML = '';
-    reportResults.appendChild(table);
+  // แสดงผลข้อมูล
+  reportResults.innerHTML = '';
+  reportResults.appendChild(table);
 
-    // แสดงข้อมูลสรุป
-    const summarySection = document.getElementById("reportSummary");
-    summarySection.classList.remove("hidden");
+  // แสดงข้อมูลสรุป
+  const summarySection = document.getElementById("reportSummary");
+  summarySection.classList.remove("hidden");
 
-    document.getElementById("totalOrders").textContent = ticketsSnap.size.toLocaleString('th-TH');
-    document.getElementById("totalAmount").textContent = totalAmount.toLocaleString('th-TH') + ' บาท';
+document.getElementById("totalOrders").textContent = ticketsSnap.size.toLocaleString('th-TH');
+document.getElementById("totalAmount").textContent = totalAmount.toLocaleString('th-TH') + ' บาท';
 
-    const dateOptions = {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    };
-    const startDateStr = dateRange.start.toLocaleDateString('th-TH', dateOptions);
-    const endDateStr = dateRange.end.toLocaleDateString('th-TH', dateOptions);
-    document.getElementById("dateRange").textContent = `${startDateStr} - ${endDateStr}`;
+document.getElementById("amountNotSpecified").textContent = countNotSpecified;
+document.getElementById("totalAmountNotSpecified").textContent = totalNotSpecified.toLocaleString('th-TH') + ' บาท';
 
-    // บันทึกข้อมูลสำหรับการ export
-    reportResults.setAttribute('data-current-round', selectedRound);
-    reportResults.setAttribute('data-total-amount', totalAmount);
-    reportResults.setAttribute('data-total-orders', ticketsSnap.size);
+document.getElementById("amount15PercentBill").textContent = count15;
+document.getElementById("total15PercentBill").textContent = total15.toLocaleString('th-TH') + ' บาท';
 
-  } catch (error) {
-    console.error("Error loading report data:", error);
-    reportResults.innerHTML = `
+document.getElementById("amount20PercentBill").textContent = count20;
+document.getElementById("total20PercentBill").textContent = total20.toLocaleString('th-TH') + ' บาท';
+
+  const dateOptions = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  };
+  const startDateStr = dateRange.start.toLocaleDateString('th-TH', dateOptions);
+  const endDateStr = dateRange.end.toLocaleDateString('th-TH', dateOptions);
+  document.getElementById("dateRange").textContent = `${startDateStr} - ${endDateStr}`;
+
+  // บันทึกข้อมูลสำหรับการ export
+  reportResults.setAttribute('data-current-round', selectedRound);
+  reportResults.setAttribute('data-total-amount', totalAmount);
+  reportResults.setAttribute('data-total-orders', ticketsSnap.size);
+
+} catch (error) {
+  console.error("Error loading report data:", error);
+  reportResults.innerHTML = `
       <div class="text-center py-12 text-red-500">
         <i class="fas fa-exclamation-triangle text-3xl"></i>
         <p class="mt-3">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
         <p class="text-sm mt-2">${error.message}</p>
       </div>
     `;
-  }
+}
 }
 
 
