@@ -121,7 +121,7 @@
   <div id="nav-placeholder"></div>
   <div id="lotto-placeholder"></div>
 
-  <div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Hero Header -->
     <div class="text-center mb-10">
       <div class="gradient-bg text-white rounded-xl p-8 mb-6">
@@ -157,11 +157,21 @@
           <div class="mb-6">
             <label for="lottoInput" class="flex text-lg font-semibold mb-2">
               กรอกโพยหวย
-              <button id="blockNumber"
+              <!-- <button id="blockNumber"
                 class="text-white px-3 rounded-lg font-medium flex items-center bg-red-500 ml-auto text-sm"
                 onclick="alert('กำลังอัพเดท')">
                 กำหนดเลขอั้น
-              </button>
+              </button> -->
+
+              <button id="blockNumber" class="text-white px-3 rounded-lg font-medium flex items-center bg-red-500 ml-auto text-sm">เลขอั้น</button>
+
+              <dialog id="blockNumberDialog">
+                <textarea id="blockedNumberInput" rows="5" class="w-full border rounded-lg p-2 mb-3"></textarea>
+                  <div class="flex justify-end gap-2">
+                    
+                <button id="saveBlockedBtn" class="bg-gray-300 px-4 py-2 rounded">บันทึก</button>
+                <button id="cancelBlockedBtn" class="bg-red-500 text-white px-4 py-2 rounded">ยกเลิก</button>
+              </dialog>
 
             </label>
             <textarea id="lottoInput" rows="12"
@@ -188,14 +198,13 @@
 
             <!-- เลือกเปอร์เซ็นต์ -->
             <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-              <label for="percentGroup" class="text-red-600 font-medium">กลุ่ม %</label>
+              <label for="percentGroup" class="text-gray-700 font-medium">กลุ่มเปอร์เซ็นต์:</label>
               <select id="percentGroup"
-                class="appearance-none border border-gray-300 rounded-md px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="border border-gray-300 rounded-md px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">ไม่ระบุ</option>
                 <option value="15%">15%</option>
                 <option value="20%">20%</option>
               </select>
-              <p class="text-red-600 underline">หากมีกลุ่มเปอร์เซ็นต์ให้เลือกกลุ่มนั้น</p>
             </div>
 
             <!-- ปุ่มล้างฟอร์ม -->
@@ -204,6 +213,8 @@
               <i class="fas fa-broom mr-2"></i> ล้างฟอร์ม
             </button>
           </div>
+
+
         </div>
       </div>
 
@@ -540,6 +551,17 @@
     const collectionName = `${user}_lottoTickets`;
     console.log("คุณคือ", user);
   </script>
+
+  <script type="module">
+    import { saveBlockedNumbers, closeBlockDialog } from './assets/js/scripts/blockNumbers.js';
+
+    document.getElementById("saveBlockedBtn").addEventListener("click", saveBlockedNumbers);
+    document.getElementById("cancelBlockedBtn").addEventListener("click", closeBlockDialog);
+    document.getElementById("blockNumber").addEventListener("click", () => {
+      document.getElementById("blockNumberDialog").showModal();
+    });
+  </script>
+
 </body>
 
 </html>
