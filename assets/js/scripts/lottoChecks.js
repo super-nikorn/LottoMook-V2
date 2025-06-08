@@ -246,47 +246,63 @@ async function checkTicketsAgainstResults(dateStr, resultData) {
       const body = document.createElement("div");
       body.className = "p-4";
 
+      // แก้ไขส่วนนี้: สร้างการ์ดแสดงผลเฉพาะเมื่อมีผลรางวัลเท่านั้น
       if (results.length > 0) {
         hasWinningTickets = true;
+
+        const block = document.createElement("div");
+        block.className = "result-card bg-white border border-gray-200 rounded-lg overflow-hidden";
+
+        // ส่วนหัวการ์ด
+        const header = document.createElement("div");
+        header.className = "border-b border-gray-200 px-4 py-3 bg-gray-50 flex justify-between items-center";
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "font-medium text-gray-800";
+        nameEl.innerHTML = `<i class="fas fa-user mr-2 text-indigo-600"></i> ${name}`;
+
+        const phoneEl = document.createElement("div");
+        phoneEl.className = "text-sm text-gray-500";
+        phoneEl.innerHTML = `<i class="fas fa-phone mr-1"></i> ${phone}`;
+
+        header.appendChild(nameEl);
+        header.appendChild(phoneEl);
+        block.appendChild(header);
+
+        // ส่วนเนื้อหาการ์ด
+        const body = document.createElement("div");
+        body.className = "p-4";
+
         const winningHeader = document.createElement("div");
         winningHeader.className = "flex items-center mb-3";
         winningHeader.innerHTML = `
-          <span class="winning-badge mr-2">
-            <i class="fas fa-trophy mr-1"></i> ถูกรางวัล
-          </span>
-          <span class="text-sm text-gray-500">
-            ${results.length} รางวัล
-          </span>
-        `;
+      <span class="winning-badge mr-2">
+        <i class="fas fa-trophy mr-1"></i> ถูกรางวัล
+      </span>
+      <span class="text-sm text-gray-500">
+        ${results.length} รางวัล
+      </span>
+    `;
         body.appendChild(winningHeader);
 
         results.forEach(result => {
           const prizeEl = document.createElement("div");
           prizeEl.className = "mb-2 last:mb-0";
           prizeEl.innerHTML = `
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="font-medium text-gray-700">${result.type}</span>
-                <span class="prize-number ml-2">${result.number}</span>
-              </div>
-              <span class="font-bold text-green-600">${result.amount.toLocaleString('th-TH')} บาท</span>
-            </div>
-          `;
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="font-medium text-gray-700">${result.type}</span>
+            <span class="prize-number ml-2">${result.number}</span>
+          </div>
+          <span class="font-bold text-green-600">${result.amount.toLocaleString('th-TH')} บาท</span>
+        </div>
+      `;
           body.appendChild(prizeEl);
         });
-      } else {
-        const losingEl = document.createElement("div");
-        losingEl.className = "flex items-center justify-center py-2";
-        losingEl.innerHTML = `
-          <span class="losing-badge">
-            <i class="fas fa-times-circle mr-1"></i> ไม่ถูกรางวัล
-          </span>
-        `;
-        body.appendChild(losingEl);
-      }
 
-      block.appendChild(body);
-      resultArea.appendChild(block);
+        block.appendChild(body);
+        resultArea.appendChild(block);
+      }
     });
 
     if (!hasWinningTickets) {
