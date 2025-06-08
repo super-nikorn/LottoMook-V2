@@ -64,12 +64,38 @@ export async function saveBlockedNumbers() {
 
         await setDoc(docRef, payload);
         alert("✅ บันทึกเลขอั้นเรียบร้อยแล้ว");
+        document.getElementById("blockedNumberInput").value = "";
         closeBlockDialog();
+
     } catch (err) {
         console.error("❌ บันทึกเลขอั้นล้มเหลว:", err);
         alert("❌ ไม่สามารถบันทึกเลขอั้นได้");
     }
 }
+
+export async function getBlockedNumbers() {
+    const user = localStorage.getItem("activeUser") || "default";
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const day = now.getDate();
+    const year = now.getFullYear();
+    const lottoRoundDate = new Date(year, currentMonth, day >= 16 ? 1 : 16);
+    const roundStr = lottoRoundDate.toISOString().split("T")[0];
+    const colName = `blockedNumbers${capitalize(user)}`;
+    const docRef = doc(db, colName, roundStr);
+
+    try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data().blocked || { twoDigits: [], threeDigits: [] };
+        }
+        return { twoDigits: [], threeDigits: [] };
+    } catch (err) {
+        console.error("❌ เกิดข้อผิดพลาดในการดึงเลขอั้น:", err);
+        return { twoDigits: [], threeDigits: [] };
+    }
+}
+
 
 export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);

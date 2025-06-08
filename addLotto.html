@@ -114,6 +114,12 @@
       font-size: 0.875rem;
       color: #64748b;
     }
+
+    /* Add this to your CSS file or style tag */
+    .blocked-number {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -157,20 +163,16 @@
           <div class="mb-6">
             <label for="lottoInput" class="flex text-lg font-semibold mb-2">
               กรอกโพยหวย
-              <!-- <button id="blockNumber"
-                class="text-white px-3 rounded-lg font-medium flex items-center bg-red-500 ml-auto text-sm"
-                onclick="alert('กำลังอัพเดท')">
-                กำหนดเลขอั้น
-              </button> -->
 
-              <button id="blockNumber" class="text-white px-3 rounded-lg font-medium flex items-center bg-red-500 ml-auto text-sm">เลขอั้น</button>
+              <button id="blockNumber"
+                class="text-white px-3 rounded-lg font-medium flex items-center bg-red-500 ml-auto text-sm">เลขอั้น</button>
 
               <dialog id="blockNumberDialog">
                 <textarea id="blockedNumberInput" rows="5" class="w-full border rounded-lg p-2 mb-3"></textarea>
-                  <div class="flex justify-end gap-2">
-                    
-                <button id="saveBlockedBtn" class="bg-gray-300 px-4 py-2 rounded">บันทึก</button>
-                <button id="cancelBlockedBtn" class="bg-red-500 text-white px-4 py-2 rounded">ยกเลิก</button>
+                <div class="flex justify-end gap-2">
+
+                  <button id="saveBlockedBtn" class="bg-gray-300 px-4 py-2 rounded">บันทึก</button>
+                  <button id="cancelBlockedBtn" class="bg-red-500 text-white px-4 py-2 rounded">ยกเลิก</button>
               </dialog>
 
             </label>
@@ -234,6 +236,7 @@
             </label>
             <textarea id="outputResult" rows="12" readonly
               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50"></textarea>
+            <div id="blockedNumbersWarning" class="mt-4"></div>
           </div>
 
           <div class="mb-6">
@@ -360,11 +363,69 @@
       return lines;
     }
 
-    function handleProcess() {
+    async function handleProcess() {
       const inputText = document.getElementById("lottoInput").value;
       tempTickets = preprocessInput(inputText);
       tempResultLines = [];
-      processNextTicket();
+
+      // Get blocked numbers
+      const blockedNumbers = await getBlockedNumbers();
+      const blockedTwoDigits = blockedNumbers.twoDigits || [];
+      const blockedThreeDigits = blockedNumbers.threeDigits || [];
+
+      // Process tickets
+      await processNextTicket();
+
+      // Display results
+      document.getElementById("outputResult").value = tempResultLines.join("\n");
+
+      // Check for blocked numbers in results
+      const resultText = tempResultLines.join("\n");
+      const blockedNumbersFound = [];
+
+      // Check 2-digit numbers
+      blockedTwoDigits.forEach(num => {
+        if (resultText.includes(num)) {
+          blockedNumbersFound.push(num);
+        }
+      });
+
+      // Check 3-digit numbers
+      blockedThreeDigits.forEach(num => {
+        if (resultText.includes(num)) {
+          blockedNumbersFound.push(num);
+        }
+      });
+
+      // Display warning if blocked numbers found
+      const warningDiv = document.getElementById("blockedNumbersWarning") ||
+        document.createElement("div");
+      warningDiv.id = "blockedNumbersWarning";
+      warningDiv.className = "mt-4 p-3 bg-red-50 border border-red-200 rounded-lg";
+
+      if (blockedNumbersFound.length > 0) {
+        warningDiv.innerHTML = `
+            <p class="text-red-600 font-medium">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                เตือน! พบเลขอั้นในโพย:
+                <span class="font-bold">${blockedNumbersFound.join(", ")}</span>
+            </p>
+        `;
+              warningDiv.style.display = "block"; // หรือ remove class 'hidden'
+
+      } else {
+        warningDiv.style.display = "none"; // หรือ add class 'hidden'
+
+      }
+
+      // Insert warning below the textarea if not already there
+      const outputContainer = document.getElementById("outputResult").parentNode;
+      if (!document.getElementById("blockedNumbersWarning")) {
+        outputContainer.appendChild(warningDiv);
+      }
+
+      const total = calculateTotal(tempResultLines);
+      document.getElementById("totalAmount").textContent = total + " บาท";
     }
 
     function processNextTicket() {
@@ -458,6 +519,7 @@
     function clearForm() {
       document.getElementById("lottoInput").value = "";
       document.getElementById("outputResult").value = "";
+      document.getElementById("blockedNumbersWarning").innerHTML = "";
       document.getElementById("choiceBox").style.display = "none";
       document.getElementById("buyerName").value = "";
       document.getElementById("totalAmount").textContent = "- บาท";
@@ -533,6 +595,7 @@
       document.getElementById("buyerName").value = "";
       document.getElementById("lottoInput").value = "";
       document.getElementById("outputResult").value = "";
+      document.getElementById("blockedNumbersWarning").innerHTML = "";
       document.getElementById("totalAmount").textContent = "- บาท";
       document.getElementById("percentGroup").value = "";
 
@@ -552,16 +615,16 @@
     console.log("คุณคือ", user);
   </script>
 
-  <script type="module">
-    import { saveBlockedNumbers, closeBlockDialog } from './assets/js/scripts/blockNumbers.js';
 
+  <script type="module">
+    import { saveBlockedNumbers, capitalize, closeBlockDialog, getBlockedNumbers } from './assets/js/scripts/blockNumbers.js';
+
+    window.getBlockedNumbers = getBlockedNumbers;
     document.getElementById("saveBlockedBtn").addEventListener("click", saveBlockedNumbers);
     document.getElementById("cancelBlockedBtn").addEventListener("click", closeBlockDialog);
     document.getElementById("blockNumber").addEventListener("click", () => {
       document.getElementById("blockNumberDialog").showModal();
     });
   </script>
-
 </body>
-
 </html>
