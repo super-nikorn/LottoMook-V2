@@ -10,6 +10,11 @@ export async function saveBlockedNumbers() {
     const text = document.getElementById("blockedNumberInput").value.trim();
     const user = localStorage.getItem("activeUser") || "default";
 
+    if (!text) {
+        alert("กรุณาป้อนเลขที่กำหนด")
+        return;
+    }
+
     // คำนวณวันที่งวดหวย
     const now = new Date();
     const currentMonth = now.getMonth();
