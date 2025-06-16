@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" href="assets/image/lotto.ico" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -53,6 +55,15 @@
 
         .delete-btn:hover {
             transform: scale(1.05);
+        }
+
+        #deleteTicketDetails {
+            white-space: pre-line;
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            display: block;
+            padding: 1rem;
         }
     </style>
 </head>
@@ -155,6 +166,11 @@
                     <p class="text-sm text-gray-500 text-center">คุณแน่ใจหรือไม่ว่าต้องการลบโพยนี้?
                         การดำเนินการนี้ไม่สามารถยกเลิกได้</p>
                 </div>
+
+
+                <pre id="deleteTicketDetails" class="text-sm text-gray-700 whitespace-pre-line"></pre>
+
+
             </div>
             <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button id="confirmDeleteBtn" type="button"
@@ -165,9 +181,67 @@
                     class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     ยกเลิก
                 </button>
+                <button id="saveImageDeleteTicket"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-500 text-base font-medium text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    บันทึกรูปภาพ
+                </button>
             </div>
         </div>
     </div>
+    <script>
+document.getElementById("saveImageDeleteTicket").addEventListener("click", () => {
+    const target = document.getElementById("deleteTicketDetails");
+
+    if (!target) {
+        alert("ไม่พบเนื้อหาที่จะจับภาพ");
+        return;
+    }
+
+    const modal = document.getElementById("deleteModal");
+    if (modal.classList.contains("hidden")) {
+        alert("กรุณาเปิด modal ก่อนบันทึกรูปภาพ");
+        return;
+    }
+
+    const scaleFactor = 2;
+
+    const options = {
+        scale: scaleFactor,
+        useCORS: true,
+        backgroundColor: "#ffffff" // ✅ พื้นหลังขาว
+    };
+
+    html2canvas(target, options).then(canvas => {
+        // Crop เฉพาะเนื้อหาจริง
+        const cropWidth = target.scrollWidth * scaleFactor;
+        const cropHeight = target.scrollHeight * scaleFactor;
+
+        const croppedCanvas = document.createElement("canvas");
+        const context = croppedCanvas.getContext("2d");
+
+        croppedCanvas.width = cropWidth;
+        croppedCanvas.height = cropHeight;
+
+        // ใส่พื้นขาวซ้ำเผื่อเนื้อหาบางส่วนโปร่งใส
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, cropWidth, cropHeight);
+
+        context.drawImage(canvas, 0, 0, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+        const link = document.createElement("a");
+        link.download = `ticket-${Date.now()}.png`;
+        link.href = croppedCanvas.toDataURL("image/png");
+        link.click();
+    }).catch(err => {
+        console.error("ไม่สามารถจับภาพได้:", err);
+        alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ");
+    });
+});
+
+
+    </script>
+
+
 
     <script type="module" src="./assets/js/scripts/deleteTickets.js"></script>
     <script type="module" src="./assets/js/main.js"></script>

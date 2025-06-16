@@ -159,9 +159,37 @@ function renderTicketRows(tickets) {
     });
   });
 }
-
+function formatLottoNumber(num) {
+  const str = String(num).trim();
+  if (str.length === 1) return "00" + str;
+  if (str.length === 2) return "0" + str;
+  return str;
+}
 function showDeleteModal() {
   const modal = document.getElementById('deleteModal');
+  const detailContainer = document.getElementById('deleteTicketDetails');
+  const ticket = allFilteredTickets.find(t => t.id === currentDocIdToDelete);
+
+  if (ticket) {
+    let content = `👤 ชื่อผู้ซื้อ: ${ticket["ชื่อผู้ซื้อ"] || "ไม่ระบุ"}\n`;
+    content += `💰 ยอดรวม: ${(ticket["ยอดรวม"] || 0).toLocaleString("th-TH")} บาท\n`;
+
+    // 🧾 รายการประเภทและเลข
+    Object.entries(ticket["ประเภท"] || {}).forEach(([type, items]) => {
+      if (items && items.length > 0) {
+        content += `\n🔸 ประเภท: ${type}\n`;
+        items.forEach((item) => {
+          const number = formatLottoNumber(item.เลข);
+          const money = item.เงิน.toLocaleString("th-TH");
+          content += `   • เลข ${number} จำนวน ${money} บาท\n`;
+        });
+      }
+    });
+
+    // แสดงใน modal
+    detailContainer.textContent = content;
+  }
+
   modal.classList.remove('hidden');
 
   document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
@@ -174,6 +202,7 @@ function showDeleteModal() {
     currentDocIdToDelete = null;
   });
 }
+
 
 async function deleteTicket() {
   if (!currentDocIdToDelete) return;
