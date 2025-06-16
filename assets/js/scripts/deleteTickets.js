@@ -159,11 +159,13 @@ function renderTicketRows(tickets) {
     });
   });
 }
-function formatLottoNumber(num) {
-  const str = String(num).trim();
-  if (str.length === 1) return "00" + str;
-  if (str.length === 2) return "0" + str;
-  return str;
+
+
+function formatLottoNumber(number) {
+  const num = number.toString();
+  if (num.length === 1) return num.padStart(2, '0'); // 0 → 00
+  if (num.length === 2) return num;                 // 85 → 85
+  return num.padStart(3, '0');        
 }
 function showDeleteModal() {
   const modal = document.getElementById('deleteModal');
@@ -181,7 +183,8 @@ function showDeleteModal() {
         items.forEach((item) => {
           const number = formatLottoNumber(item.เลข);
           const money = item.เงิน.toLocaleString("th-TH");
-          content += `   • เลข ${number} จำนวน ${money} บาท\n`;
+        content += `- เลข ${formatLottoNumber(item.เลข)} (${item.เงิน.toLocaleString("th-TH")} บาท)\n`;
+
         });
       }
     });
